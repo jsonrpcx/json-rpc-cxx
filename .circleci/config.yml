@@ -1,0 +1,54 @@
+version: 2
+jobs:
+  "build-linux-gcc":
+    docker:
+      - image: "debian:buster"
+    parallelism: 4
+    steps:
+      - checkout
+      - run:
+          name: Installing GCC and CMake
+          command: 'apt-get update && apt-get install -y gcc g++ cmake'
+      - run:
+          name: Build
+          command: cmake . && cmake --build .
+      - run:
+          nmae: Run tests
+          command: ./jsonrpccpp-test -s
+  "build-linux-clang":
+    docker:
+      - image: "debian:buster"
+    parallelism: 4
+    steps:
+      - checkout
+      - run:
+          name: Installing GCC and CMake
+          command: 'apt-get update && apt-get install -y clang cmake'
+      - run:
+          name: Build
+          command: cmake . && cmake --build .
+      - run:
+          nmae: Run tests
+          command: ./jsonrpccpp-test -s
+  "build-osx-clang":
+    macos:
+      xcode: "10.2.1"
+    parallelism: 4
+    steps:
+      - checkout
+      - run:
+          name: Installing CMake
+          command: 'brew install cmake'
+      - run:
+          name: Build
+          command: cmake . && cmake --build .
+      - run:
+          nmae: Run tests
+          command: ./jsonrpccpp-test -s
+workflows:
+  version: 2
+  build:
+    jobs:
+      - "build-linux-gcc"
+      - "build-linux-clang"
+      - "build-osx-clang"

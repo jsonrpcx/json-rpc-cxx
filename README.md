@@ -3,6 +3,8 @@
 # json-rpc-cxx
 
 [![Build status](https://ci.appveyor.com/api/projects/status/c6rv869h984m1eo2?svg=true)](https://ci.appveyor.com/project/cinemast/json-rpc-cxx)
+[![CircleCI](https://circleci.com/gh/jsonrpcx/json-rpc-cxx.svg?style=svg)](https://circleci.com/gh/jsonrpcx/json-rpc-cxx)
+
 
 ![json-rpc-cxx-icon](doc/icon.png)
 
