@@ -1,6 +1,6 @@
 **THIS IS A WORK IN PROGRESS PROJECT**
 
-#json-rpc-cxx
+# json-rpc-cxx
 
 [![Build status](https://ci.appveyor.com/api/projects/status/c6rv869h984m1eo2?svg=true)](https://ci.appveyor.com/project/cinemast/json-rpc-cxx)
 
