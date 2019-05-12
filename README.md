@@ -1,6 +1,8 @@
 **THIS IS A WORK IN PROGRESS PROJECT**
 
 #json-rpc-cxx
+[![Build status](https://ci.appveyor.com/api/projects/status/c6rv869h984m1eo2?svg=true)](https://ci.appveyor.com/project/cinemast/json-rpc-cxx)
+
 ![json-rpc-cxx-icon](doc/icon.png)
 
 A [JSON-RPC](https://www.jsonrpc.org/) (1.0 & 2.0) framework implemented in C++17 using the [nlohmann's json for modern C++](https://github.com/nlohmann/json).

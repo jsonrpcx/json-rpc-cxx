@@ -215,7 +215,7 @@ TEST_CASE_METHOD(Server2, "v2_invocations", TEST_MODULE) {
   connector.CallNotification("dirty_notification", nullptr);
   connector.VerifyNotificationResult();
   connector.CallMethod(1, "dirty_method", {{"a",3},{"b",0}});
-  connector.VerifyMethodError(-32603	, "std::exception", 1);
+  connector.VerifyMethodError(-32603	, "internal server error", 1);
   connector.CallMethod(1, "div_function", {{"a",3},{"b",0}});
   connector.VerifyMethodError(-32602, "b must not be 0", 1);
   connector.CallMethod(1, "dirty_method2", {{"a",3},{"b",0}});
