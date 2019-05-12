@@ -50,7 +50,6 @@ public:
   }
 
   json VerifyBatchResponse() {
-    cout << "RAW RESPONSE: " << raw_response << endl;
     json result = json::parse(raw_response);
     REQUIRE(result.is_array());
     return result;
