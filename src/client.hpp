@@ -24,7 +24,7 @@ namespace jsonrpccpp {
     virtual std::string Send(const std::string &request) = 0;
   };
 
-  //TODO: add batch calls
+  // TODO: add batch calls
 
   class JsonRpcClient {
   public:
@@ -106,88 +106,86 @@ namespace jsonrpccpp {
 
   class BatchRequest {
   public:
-      BatchRequest() : call(json::array()) {}
+    BatchRequest() : call(json::array()) {}
 
-      BatchRequest& AddMethodCall(const id_type &id, const std::string& name, const positional_parameter &params = {}) {
-          json request = {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}};
-          if (std::get_if<int>(&id) != nullptr) {
-              request["id"] = std::get<int>(id);
-          } else {
-              request["id"] = std::get<std::string>(id);
-          }
-          call.push_back(request);
-          return *this;
+    BatchRequest &AddMethodCall(const id_type &id, const std::string &name, const positional_parameter &params = {}) {
+      json request = {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}};
+      if (std::get_if<int>(&id) != nullptr) {
+        request["id"] = std::get<int>(id);
+      } else {
+        request["id"] = std::get<std::string>(id);
       }
+      call.push_back(request);
+      return *this;
+    }
 
-      BatchRequest& AddNamedMethodCall(const id_type &id, const std::string& name, const named_parameter &params = {}) {
-          json request = {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}};
-          if (std::get_if<int>(&id) != nullptr) {
-              request["id"] = std::get<int>(id);
-          } else {
-              request["id"] = std::get<std::string>(id);
-          }
-          call.push_back(request);
-          return *this;
+    BatchRequest &AddNamedMethodCall(const id_type &id, const std::string &name, const named_parameter &params = {}) {
+      json request = {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}};
+      if (std::get_if<int>(&id) != nullptr) {
+        request["id"] = std::get<int>(id);
+      } else {
+        request["id"] = std::get<std::string>(id);
       }
+      call.push_back(request);
+      return *this;
+    }
 
-      BatchRequest& AddNotificationCall(const std::string& name, const positional_parameter &params = {}) {
-          call.push_back({{"method", name}, {"params", params}, {"jsonrpc", "2.0"}});
-          return *this;
-      }
+    BatchRequest &AddNotificationCall(const std::string &name, const positional_parameter &params = {}) {
+      call.push_back({{"method", name}, {"params", params}, {"jsonrpc", "2.0"}});
+      return *this;
+    }
 
-      BatchRequest& AddNamedNotificationCall(const std::string& name, const named_parameter &params = {}) {
-          call.push_back({{"method", name}, {"params", params}, {"jsonrpc", "2.0"}});
-          return *this;
-      }
+    BatchRequest &AddNamedNotificationCall(const std::string &name, const named_parameter &params = {}) {
+      call.push_back({{"method", name}, {"params", params}, {"jsonrpc", "2.0"}});
+      return *this;
+    }
 
-      const json& Build() const {
-          return call;
-      }
+    const json &Build() const { return call; }
+
   private:
-      json call;
+    json call;
   };
 
   class BatchResponse {
   public:
-      BatchResponse(std::map<json, json>&& results, std::map<json, JsonRpcException> &&errors) {
-          this->errors = errors;
-          this->results = results;
-      }
+    BatchResponse(std::map<json, json> &&results, std::map<json, JsonRpcException> &&errors) {
+      this->errors = errors;
+      this->results = results;
+    }
 
-      template<typename T>
-      T GetResult(const json& id) {
-        if (results.find(id) != results.end()) {
-            //TOOD: catch type conversion error
-            return results[id].get<T>();
-        } else if (errors.find(id) != errors.end()) {
-            throw errors[id];
-        }
-        throw JsonRpcException(-32700, std::string("no result found for id ") + id.dump());
+    template <typename T>
+    T GetResult(const json &id) {
+      if (results.find(id) != results.end()) {
+        // TOOD: catch type conversion error
+        return results[id].get<T>();
+      } else if (errors.find(id) != errors.end()) {
+        throw errors[id];
       }
+      throw JsonRpcException(-32700, std::string("no result found for id ") + id.dump());
+    }
 
   private:
-      std::map<json, json> results;
-      std::map<json, JsonRpcException> errors;
+    std::map<json, json> results;
+    std::map<json, JsonRpcException> errors;
   };
 
   class JsonRpc2Client : public JsonRpcClient {
   public:
-      JsonRpc2Client(IClientConnector &connector) : JsonRpcClient(connector, version::v2) {}
+    JsonRpc2Client(IClientConnector &connector) : JsonRpcClient(connector, version::v2) {}
 
-      BatchResponse BatchCall(const BatchRequest& request) {
-        try {
-          json response = json::parse(connector.Send(request.Build().dump()));
-          if (!response.is_array()) {
-            throw JsonRpcException(-32700, std::string("invalid JSON response from server: expected array"));
-          }
-          std::map<json, json> results;
-          std::map<json, JsonRpcException> errors;
-
-          return BatchResponse(std::move(results), std::move(errors));
-        } catch (json::parse_error &e) {
-          throw JsonRpcException(-32700, std::string("invalid JSON response from server: ") + e.what());
+    BatchResponse BatchCall(const BatchRequest &request) {
+      try {
+        json response = json::parse(connector.Send(request.Build().dump()));
+        if (!response.is_array()) {
+          throw JsonRpcException(-32700, std::string("invalid JSON response from server: expected array"));
         }
-      }
+        std::map<json, json> results;
+        std::map<json, JsonRpcException> errors;
 
+        return BatchResponse(std::move(results), std::move(errors));
+      } catch (json::parse_error &e) {
+        throw JsonRpcException(-32700, std::string("invalid JSON response from server: ") + e.what());
+      }
+    }
   };
 } // namespace jsonrpccpp

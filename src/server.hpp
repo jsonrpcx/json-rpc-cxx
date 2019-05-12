@@ -5,7 +5,7 @@
 #include <string>
 
 namespace jsonrpccpp {
-    class JsonRpcServer {
+  class JsonRpcServer {
   public:
     virtual ~JsonRpcServer() = default;
     virtual std::string HandleRequest(const std::string &request) = 0;
@@ -20,6 +20,7 @@ namespace jsonrpccpp {
         return false;
       return dispatcher.Add(name, callback, mapping);
     }
+
   protected:
     Dispatcher dispatcher;
     static inline bool has_key(const nlohmann::json &json, const std::string &name) { return (json.find(name) != json.end()); }
@@ -36,7 +37,7 @@ namespace jsonrpccpp {
         json request = json::parse(requestString);
         if (request.is_array()) {
           json result = json::array();
-          for(json& r : request) {
+          for (json &r : request) {
             json res = this->HandleSingleRequest(r);
             if (!res.is_null()) {
               result.push_back(std::move(res));
@@ -59,11 +60,11 @@ namespace jsonrpccpp {
     }
 
   private:
-    static inline bool valid_id(const json& request) {
+    static inline bool valid_id(const json &request) {
       return has_key(request, "id") && (request["id"].is_number() || request["id"].is_string() || request["id"].is_null());
     }
 
-    json HandleSingleRequest(json& request) {
+    json HandleSingleRequest(json &request) {
       json id = nullptr;
       if (valid_id(request)) {
         id = request["id"];
@@ -71,7 +72,7 @@ namespace jsonrpccpp {
       try {
         return ProcessSingleRequest(request);
       } catch (JsonRpcException &e) {
-        json error = {{"code", e.Code()},{"message", e.Message()}};
+        json error = {{"code", e.Code()}, {"message", e.Message()}};
         if (!e.Data().is_null()) {
           error["data"] = e.Data();
         }
@@ -83,7 +84,7 @@ namespace jsonrpccpp {
       }
     }
 
-    json ProcessSingleRequest(json& request) {
+    json ProcessSingleRequest(json &request) {
       if (!has_key_type(request, "jsonrpc", json::value_t::string) || request["jsonrpc"] != "2.0") {
         throw JsonRpcException(-32600, R"(invalid request: missing jsonrpc field set to "2.0")");
       }
@@ -96,7 +97,7 @@ namespace jsonrpccpp {
       if (has_key(request, "params") && !(request["params"].is_array() || request["params"].is_object() || request["params"].is_null())) {
         throw JsonRpcException(-32600, "invalid request: params field must be an array, object or null");
       }
-      if (!has_key(request,"params") || has_key_type(request, "params", json::value_t::null)) {
+      if (!has_key(request, "params") || has_key_type(request, "params", json::value_t::null)) {
         request["params"] = json::array();
       }
       if (!has_key(request, "id")) {

@@ -1,5 +1,5 @@
-#include "catch/catch.hpp"
 #include "client.hpp"
+#include "catch/catch.hpp"
 #include "common.hpp"
 #include <iostream>
 

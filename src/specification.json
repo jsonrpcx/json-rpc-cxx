@@ -1,8 +1,8 @@
 {
-  "methods" : {
-    "Members.Add" : {
-      "description":  "Add a new person as member",
-      "params" : [
+  "methods": {
+    "Members.Add": {
+      "description": "Add a new person as member",
+      "params": [
         {
           "$ref": "#types/Person",
           "default": -1,
@@ -14,8 +14,7 @@
       }
     }
   },
-  "notifications" : {
-
+  "notifications": {
   },
   "types": {
     "Person": {

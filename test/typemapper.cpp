@@ -1,5 +1,5 @@
-#include "catch/catch.hpp"
 #include "typemapper.hpp"
+#include "catch/catch.hpp"
 #include <iostream>
 #include <limits>
 

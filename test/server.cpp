@@ -1,5 +1,5 @@
-#include "catch/catch.hpp"
 #include "server.hpp"
+#include "catch/catch.hpp"
 #include <iostream>
 
 using namespace jsonrpccpp;
@@ -10,38 +10,26 @@ using namespace Catch::Matchers;
 
 class TestServerConnector {
 public:
-  TestServerConnector(JsonRpcServer& handler) : handler(handler) {}
+  TestServerConnector(JsonRpcServer &handler) : handler(handler) {}
 
-  void SendRawRequest(const string& request) {
-    this->raw_response = handler.HandleRequest(request);
-  }
+  void SendRawRequest(const string &request) { this->raw_response = handler.HandleRequest(request); }
 
-  void SendRequest(const json& request) {
-    SendRawRequest(request.dump());
-  }
+  void SendRequest(const json &request) { SendRawRequest(request.dump()); }
 
-  json BuildMethodCall(json id, const string&name, const json& params) {
-    return {{"id", id}, {"method", name}, {"params", params}, {"jsonrpc", "2.0"}};
-  }
+  json BuildMethodCall(json id, const string &name, const json &params) { return {{"id", id}, {"method", name}, {"params", params}, {"jsonrpc", "2.0"}}; }
 
-  void CallMethod(json id, const string& name, const json& params) {
-    SendRequest(BuildMethodCall(id, name, params));
-  }
+  void CallMethod(json id, const string &name, const json &params) { SendRequest(BuildMethodCall(id, name, params)); }
 
-  json BuildNotificationCall(const string&name, const json& params) {
-    return {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}};
-  }
+  json BuildNotificationCall(const string &name, const json &params) { return {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}}; }
 
-  void CallNotification(const string& name, const json& params) {
-    SendRequest(BuildNotificationCall(name, params));
-  }
+  void CallNotification(const string &name, const json &params) { SendRequest(BuildNotificationCall(name, params)); }
 
   json VerifyMethodResult(json id) {
     json result = json::parse(this->raw_response);
     return VerifyMethodResult(id, result);
   }
 
-  static json VerifyMethodResult(json id, json& result) {
+  static json VerifyMethodResult(json id, json &result) {
     REQUIRE(!has_key(result, "error"));
     REQUIRE(result["jsonrpc"] == "2.0");
     REQUIRE(result["id"] == id);
@@ -55,20 +43,16 @@ public:
     return result;
   }
 
-  void VerifyNotificationResult() {
-    VerifyNotificationResult(this->raw_response);
-  }
+  void VerifyNotificationResult() { VerifyNotificationResult(this->raw_response); }
 
-  static void VerifyNotificationResult(string& raw_response) {
-    REQUIRE(raw_response == "");
-  }
+  static void VerifyNotificationResult(string &raw_response) { REQUIRE(raw_response == ""); }
 
   json VerifyMethodError(int code, string message, json id) {
-      json error = json::parse(this->raw_response);
-      return VerifyMethodError(code, message, id, error);
+    json error = json::parse(this->raw_response);
+    return VerifyMethodError(code, message, id, error);
   }
 
-  static json VerifyMethodError(int code, string message, json id, json& result) {
+  static json VerifyMethodError(int code, string message, json id, json &result) {
     REQUIRE(!has_key(result, "result"));
     REQUIRE(result["jsonrpc"] == "2.0");
     REQUIRE(result["id"] == id);
@@ -152,8 +136,19 @@ void from_json(const json &j, product &p);
 
 class TestServer {
 public:
-  unsigned int add_function(unsigned int a, unsigned int b) { this->param_a = a; this->param_b = b; return a + b; }
-  unsigned int div_function(unsigned int a, unsigned int b) { this->param_a = a; this->param_b = b; if (b != 0) return a / b; else throw JsonRpcException(-32602, "b must not be 0"); }
+  unsigned int add_function(unsigned int a, unsigned int b) {
+    this->param_a = a;
+    this->param_b = b;
+    return a + b;
+  }
+  unsigned int div_function(unsigned int a, unsigned int b) {
+    this->param_a = a;
+    this->param_b = b;
+    if (b != 0)
+      return a / b;
+    else
+      throw JsonRpcException(-32602, "b must not be 0");
+  }
   void some_procedure(const string &param) { param_proc = param; }
   bool add_products(const vector<product> &products) {
     if (products.empty())
@@ -162,10 +157,9 @@ public:
     return true;
   };
 
-  void dirty_notification() { throw std::exception();}
+  void dirty_notification() { throw std::exception(); }
   int dirty_method(int a, int b) { throw std::exception(); }
-  int dirty_method2(int a, int b) { throw -7; }
-
+  int dirty_method2(int a, int b) { throw - 7; }
 
   string param_proc;
   int param_a;
@@ -188,16 +182,17 @@ TEST_CASE_METHOD(Server2, "v2_invocations", TEST_MODULE) {
   REQUIRE(!server.Add("rpc.", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
   REQUIRE(server.Add("rpc", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
 
-  connector.CallMethod(1, "add_function", {{"a",3},{"b",4}});
+  connector.CallMethod(1, "add_function", {{"a", 3}, {"b", 4}});
   CHECK(connector.VerifyMethodResult(1) == 7);
   CHECK(t.param_a == 3);
   CHECK(t.param_b == 4);
 
-  connector.CallNotification("some_procedure", {{"param","something set"}});
+  connector.CallNotification("some_procedure", {{"param", "something set"}});
   connector.VerifyNotificationResult();
   CHECK(t.param_proc == "something set");
 
-  json params = json::parse(R"({"products": [{"id": 1, "price": 23.3, "name": "some product", "category": "cc"},{"id": 2, "price": 23.4, "name": "some product 2", "category": "order"}]})");
+  json params = json::parse(
+      R"({"products": [{"id": 1, "price": 23.3, "name": "some product", "category": "cc"},{"id": 2, "price": 23.4, "name": "some product 2", "category": "order"}]})");
 
   connector.CallMethod(1, "add_products", params);
   CHECK(connector.VerifyMethodResult(1) == true);
@@ -213,14 +208,13 @@ TEST_CASE_METHOD(Server2, "v2_invocations", TEST_MODULE) {
 
   connector.CallNotification("dirty_notification", nullptr);
   connector.VerifyNotificationResult();
-  connector.CallMethod(1, "dirty_method", {{"a",3},{"b",0}});
-  connector.VerifyMethodError(-32603	, "internal server error", 1);
-  connector.CallMethod(1, "div_function", {{"a",3},{"b",0}});
+  connector.CallMethod(1, "dirty_method", {{"a", 3}, {"b", 0}});
+  connector.VerifyMethodError(-32603, "internal server error", 1);
+  connector.CallMethod(1, "div_function", {{"a", 3}, {"b", 0}});
   connector.VerifyMethodError(-32602, "b must not be 0", 1);
-  connector.CallMethod(1, "dirty_method2", {{"a",3},{"b",0}});
-  connector.VerifyMethodError(-32603	, "internal server error", 1);
+  connector.CallMethod(1, "dirty_method2", {{"a", 3}, {"b", 0}});
+  connector.VerifyMethodError(-32603, "internal server error", 1);
 }
-
 
 TEST_CASE_METHOD(Server2, "v2_batch") {
   TestServer t;
@@ -228,9 +222,9 @@ TEST_CASE_METHOD(Server2, "v2_batch") {
 
   json batchcall;
 
-  batchcall.push_back(connector.BuildMethodCall(1, "add_function", {{"a",3},{"b",4}}));
-  batchcall.push_back(connector.BuildMethodCall(2, "add_function", {{"a",300},{"b",4}}));
-  batchcall.push_back(connector.BuildMethodCall(3, "add_function", {{"a",300}}));
+  batchcall.push_back(connector.BuildMethodCall(1, "add_function", {{"a", 3}, {"b", 4}}));
+  batchcall.push_back(connector.BuildMethodCall(2, "add_function", {{"a", 300}, {"b", 4}}));
+  batchcall.push_back(connector.BuildMethodCall(3, "add_function", {{"a", 300}}));
   batchcall.push_back("");
 
   connector.SendRequest(batchcall);
@@ -245,6 +239,4 @@ TEST_CASE_METHOD(Server2, "v2_batch") {
   connector.SendRawRequest("[]");
   batchresponse = connector.VerifyBatchResponse();
   REQUIRE(batchresponse.size() == 0);
-
 }
-
