@@ -17,11 +17,17 @@ A [JSON-RPC](https://www.jsonrpc.org/) (1.0 & 2.0) framework implemented in C++1
 - Runtime type checking
 - Cross-platform (Windows, Linux, OSX)
 
+## Installation
+```
+mkdir build && cd build
+cmake ..
+sudo make install
+```
+
+
 ## Usage
 - [examples/warehouse/main.cpp](examples/warehouse/main.cpp)
 
-### Installation
-TBD, probably vcpkg and header only
 
 
 ## Design goals
