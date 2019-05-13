@@ -3,8 +3,8 @@ set(CMAKE_CXX_STANDARD 17)
 project(json-rpc-cxx VERSION 0.0.1 LANGUAGES CXX)
 
 
-option(COMPILE_TESTS "Enable tests" OFF)
-option(COMPILE_EXAMPLES "Enable examples" OFF)
+option(COMPILE_TESTS "Enable tests" ON)
+option(COMPILE_EXAMPLES "Enable examples" ON)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
 include(GNUInstallDirs)
