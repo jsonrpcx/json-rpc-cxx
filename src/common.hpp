@@ -15,7 +15,6 @@ namespace jsonrpccxx {
       err = std::to_string(code) + ": " + message + ", data: " + data.dump();
     }
 
-    // TODO: user uppercase
     int Code() const { return code; }
     const std::string &Message() const { return message; }
     const json &Data() const { return data; }

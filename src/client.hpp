@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "iclientconnector.hpp"
 #include <exception>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -15,12 +16,6 @@ namespace jsonrpccxx {
   struct JsonRpcResponse {
     std::string id;
     json result;
-  };
-
-  class IClientConnector {
-  public:
-    virtual ~IClientConnector() = default;
-    virtual std::string Send(const std::string &request) = 0;
   };
 
   class JsonRpcClient {
@@ -42,7 +37,7 @@ namespace jsonrpccxx {
     static inline bool has_key(const json &v, const std::string &key) { return v.find(key) != v.end(); }
     static inline bool has_key_type(const json &v, const std::string &key, json::value_t type) { return has_key(v, key) && v.at(key).type() == type; }
 
-    inline JsonRpcException get_error(const json &value) {
+    static inline JsonRpcException get_error(const json &value) {
       bool has_code = has_key_type(value, "code", json::value_t::number_integer);
       bool has_message = has_key_type(value, "message", json::value_t::string);
       bool has_data = has_key(value, "data");
