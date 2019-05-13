@@ -8,7 +8,6 @@
 using namespace jsonrpccxx;
 using namespace std;
 
-
 int main() {
   JsonRpc2Server rpcServer;
   InMemoryConnector connector(rpcServer);

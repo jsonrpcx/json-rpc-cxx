@@ -18,12 +18,11 @@ A [JSON-RPC](https://www.jsonrpc.org/) (1.0 & 2.0) framework implemented in C++1
 - Cross-platform (Windows, Linux, OSX)
 
 ## Usage
-TBD
+- [examples/warehouse/main.cpp](examples/warehouse/main.cpp)
 
 ### Installation
 TBD, probably vcpkg and header only
-### Examples
-Examples can be found in [src/examples](jsonrpccxx/examples)
+
 
 ## Design goals
 - Easy to use interface
