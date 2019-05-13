@@ -52,10 +52,8 @@ namespace jsonrpccxx {
       return "array";
     case json::value_t::string:
       return "string";
-    case json::value_t::null:
-      return "null";
     default:
-      return "unknown type";
+      return "null";
     }
   }
 
