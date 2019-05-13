@@ -256,21 +256,4 @@ TEST_CASE_METHOD(F, "v1_notification_call_params_byposition", TEST_MODULE) {
   CHECK(c.request["params"][2] == true);
 }
 
-enum class category2 { order, cash_carry };
-struct product2 {
-  int id;
-  double price;
-  string name;
-  category2 cat;
-};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(category2, {{category2::order, "order"}, {category2::cash_carry, "cc"}});
-void to_json(json &j, const product2 &p) { j = json{{"id", p.id}, {"price", p.price}, {"name", p.name}, {"category", p.cat}}; }
-void from_json(const json &j, product2 &p) {
-  j.at("name").get_to(p.name);
-  j.at("id").get_to(p.id);
-  j.at("price").get_to(p.price);
-  j.at("category").get_to(p.cat);
-}
-
 // TODO: test cases with return type mapping and param mapping for v1/v2 method and notification

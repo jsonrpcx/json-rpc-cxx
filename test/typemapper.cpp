@@ -117,8 +117,6 @@ void from_json(const json &j, product &p) {
 
 static vector<product> catalog;
 bool add_products(const vector<product> &products) {
-  if (products.empty())
-    return false;
   std::copy(products.begin(), products.end(), std::back_inserter(catalog));
   return true;
 };
