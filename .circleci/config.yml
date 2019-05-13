@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.2
 jobs:
   "build-linux-gcc":
     docker:
@@ -8,13 +10,18 @@ jobs:
       - checkout
       - run:
           name: Installing GCC and CMake
-          command: 'apt-get update && apt-get install -y gcc g++ cmake'
+          command: 'apt-get update && apt-get install -y gcc g++ cmake lcov curl'
       - run:
           name: Build
-          command: cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON . && cmake --build .
+          command: cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON -DCODE_COVERAGE=ON . && cmake --build .
       - run:
-          nmae: Run tests
+          name: Run tests
           command: ./jsonrpccpp-test -s
+      - run:
+          name: Create coverage report
+          command: lcov --directory . --capture --output-file coverage.info && lcov --remove coverage.info '/usr/*' --output-file coverage.info
+      - codecov/upload:
+          file: coverage.info
   "build-linux-clang":
     docker:
       - image: "debian:buster"
