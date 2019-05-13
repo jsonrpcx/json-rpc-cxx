@@ -29,7 +29,7 @@ int main() {
   rpcServer.Add("AddProduct", GetHandle(&WarehouseServer::AddProduct, app), {"product"});
 
   Product p = {"0xff", 22.4, "Product 1", category::cash_carry};
-  cout << "Adding product: " << appClient.AddProduct(p) << "\n";
+  cout << "Adding product: " << std::boolalpha << appClient.AddProduct(p) << "\n";
 
   Product p2 = appClient.GetProduct("0xff");
   cout << "Found product: " << p2.name << "\n";

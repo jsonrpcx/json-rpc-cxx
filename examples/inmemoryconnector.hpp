@@ -2,14 +2,10 @@
 #include <jsonrpccxx/iclientconnector.hpp>
 #include <jsonrpccxx/server.hpp>
 
-class InMemoryConnector : public jsonrpccxx::IClientConnector{
+class InMemoryConnector : public jsonrpccxx::IClientConnector {
 public:
-    InMemoryConnector(jsonrpccxx::JsonRpcServer& server) : server(server) {}
-
-    virtual std::string Send(const std::string &request) {
-        return server.HandleRequest(request);
-    }
-
+  explicit InMemoryConnector(jsonrpccxx::JsonRpcServer &server) : server(server) {}
+  std::string Send(const std::string &request) override { return server.HandleRequest(request); }
 private:
-    jsonrpccxx::JsonRpcServer& server;
+  jsonrpccxx::JsonRpcServer &server;
 };
