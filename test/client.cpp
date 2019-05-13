@@ -9,9 +9,6 @@ using namespace std;
 using namespace jsonrpccxx;
 using namespace Catch::Matchers;
 
-bool has_key(const json &v, const std::string &key) { return v.find(key) != v.end(); }
-bool has_key_type(const json &v, const std::string &key, json::value_t type) { return has_key(v, key) && v.at(key).type() == type; }
-
 class TestClientConnector : public IClientConnector {
 public:
   json request;

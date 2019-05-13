@@ -23,8 +23,6 @@ namespace jsonrpccxx {
 
   protected:
     Dispatcher dispatcher;
-    static inline bool has_key(const nlohmann::json &json, const std::string &name) { return (json.find(name) != json.end()); }
-    static inline bool has_key_type(const json &v, const std::string &key, json::value_t type) { return has_key(v, key) && v.at(key).type() == type; }
   };
 
   class JsonRpc2Server : public JsonRpcServer {
@@ -60,10 +58,6 @@ namespace jsonrpccxx {
     }
 
   private:
-    static inline bool valid_id(const json &request) {
-      return has_key(request, "id") && (request["id"].is_number() || request["id"].is_string() || request["id"].is_null());
-    }
-
     json HandleSingleRequest(json &request) {
       json id = nullptr;
       if (valid_id(request)) {

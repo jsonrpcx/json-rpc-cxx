@@ -63,10 +63,6 @@ public:
     REQUIRE_THAT(result["error"]["message"], Contains(message));
     return result["error"];
   }
-
-  static bool has_key(const json &v, const std::string &key) { return v.find(key) != v.end(); }
-  static bool has_key_type(const json &v, const std::string &key, json::value_t type) { return has_key(v, key) && v.at(key).type() == type; }
-
 private:
   JsonRpcServer &handler;
   string raw_response;
