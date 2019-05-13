@@ -1,7 +1,6 @@
-#include "batchclient.hpp"
 #include "catch/catch.hpp"
-#include "common.hpp"
 #include <iostream>
+#include <jsonrpccxx/batchclient.hpp>
 
 #define TEST_MODULE "[batch]"
 

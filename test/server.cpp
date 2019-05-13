@@ -1,6 +1,6 @@
-#include "server.hpp"
 #include "catch/catch.hpp"
 #include <iostream>
+#include <jsonrpccxx/server.hpp>
 
 using namespace jsonrpccxx;
 using namespace std;
@@ -63,6 +63,7 @@ public:
     REQUIRE_THAT(result["error"]["message"], Contains(message));
     return result["error"];
   }
+
 private:
   JsonRpcServer &handler;
   string raw_response;

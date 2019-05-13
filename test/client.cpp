@@ -1,8 +1,7 @@
-#include "client.hpp"
 #include "catch/catch.hpp"
-#include "common.hpp"
 #include "testclientconnector.hpp"
 #include <iostream>
+#include <jsonrpccxx/client.hpp>
 
 #define TEST_MODULE "[client]"
 

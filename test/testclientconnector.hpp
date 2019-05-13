@@ -1,7 +1,9 @@
 #pragma once
-#include "catch/catch.hpp"
-#include "iclientconnector.hpp"
-#include "nlohmann/json.hpp"
+#include <catch/catch.hpp>
+#include <jsonrpccxx/common.hpp>
+#include <jsonrpccxx/client.hpp>
+#include <jsonrpccxx/iclientconnector.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
 
 using namespace jsonrpccxx;

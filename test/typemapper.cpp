@@ -1,6 +1,6 @@
-#include "typemapper.hpp"
 #include "catch/catch.hpp"
 #include <iostream>
+#include <jsonrpccxx/typemapper.hpp>
 #include <limits>
 
 using namespace jsonrpccxx;

@@ -1,4 +1,4 @@
-#include "examples/inmemoryconnector.hpp"
+#include "inmemoryconnector.hpp"
 #include "warehouseapp.hpp"
 
 #include <iostream>
@@ -12,7 +12,8 @@ class WareHouseClient {
 public:
   WareHouseClient(JsonRpcClient &client) : client(client) {}
   bool AddProduct(const Product &p) { return client.CallMethod<bool>(1, "AddProduct", {p}); }
-  Product GetProduct(const std::string &id) { return  client.CallMethod<Product>(1, "GetProduct", {id});}
+  Product GetProduct(const std::string &id) { return client.CallMethod<Product>(1, "GetProduct", {id}); }
+
 private:
   JsonRpcClient &client;
 };

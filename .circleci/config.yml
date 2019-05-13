@@ -11,7 +11,7 @@ jobs:
           command: 'apt-get update && apt-get install -y gcc g++ cmake'
       - run:
           name: Build
-          command: cmake . && cmake --build .
+          command: cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON . && cmake --build .
       - run:
           nmae: Run tests
           command: ./jsonrpccpp-test -s
@@ -26,7 +26,7 @@ jobs:
           command: 'apt-get update && apt-get install -y clang cmake'
       - run:
           name: Build
-          command: cmake . && cmake --build .
+          command: cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON . && cmake --build .
       - run:
           nmae: Run tests
           command: ./jsonrpccpp-test -s
@@ -41,7 +41,7 @@ jobs:
           command: 'brew install cmake'
       - run:
           name: Build
-          command: cmake . && cmake --build .
+          command: cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON . && cmake --build .
       - run:
           nmae: Run tests
           command: ./jsonrpccpp-test -s

@@ -1,6 +1,6 @@
 #include "catch/catch.hpp"
-#include "server.hpp"
 #include <iostream>
+#include <jsonrpccxx/dispatcher.hpp>
 
 using namespace jsonrpccxx;
 using namespace std;
