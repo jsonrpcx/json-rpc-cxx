@@ -2,7 +2,7 @@
 #include "server.hpp"
 #include <iostream>
 
-using namespace jsonrpccpp;
+using namespace jsonrpccxx;
 using namespace std;
 using namespace Catch::Matchers;
 

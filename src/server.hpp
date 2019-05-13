@@ -4,7 +4,7 @@
 #include "dispatcher.hpp"
 #include <string>
 
-namespace jsonrpccpp {
+namespace jsonrpccxx {
   class JsonRpcServer {
   public:
     virtual ~JsonRpcServer() = default;

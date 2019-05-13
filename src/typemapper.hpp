@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-namespace jsonrpccpp {
+namespace jsonrpccxx {
   typedef std::vector<json> Parameters;
   typedef std::function<json(const Parameters &)> MethodHandle;
   typedef std::function<void(const Parameters &)> NotificationHandle;
@@ -165,4 +165,4 @@ namespace jsonrpccpp {
     };
     return GetHandle(function);
   }
-} // namespace jsonrpccpp
+} // namespace jsonrpccxx

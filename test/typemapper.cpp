@@ -3,7 +3,7 @@
 #include <iostream>
 #include <limits>
 
-using namespace jsonrpccpp;
+using namespace jsonrpccxx;
 using namespace std;
 using namespace Catch::Matchers;
 

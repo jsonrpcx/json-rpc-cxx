@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-namespace jsonrpccpp {
+namespace jsonrpccxx {
 
   typedef std::vector<std::string> NamedParamMapping;
   static NamedParamMapping NAMED_PARAM_MAPPING;
@@ -98,4 +98,4 @@ namespace jsonrpccpp {
     std::map<std::string, NamedParamMapping> mapping;
     inline bool contains(const std::string &name) { return (methods.find(name) != methods.end() || notifications.find(name) != notifications.end()); }
   };
-} // namespace jsonrpccpp
+} // namespace jsonrpccxx

@@ -5,9 +5,8 @@
 #include <string>
 #include <variant>
 
-namespace jsonrpccpp {
+namespace jsonrpccxx {
   enum class version { v1, v2 };
-  enum class param_type { by_position, by_name };
 
   typedef std::vector<json> positional_parameter;
   typedef std::map<std::string, json> named_parameter;
@@ -23,8 +22,6 @@ namespace jsonrpccpp {
     virtual ~IClientConnector() = default;
     virtual std::string Send(const std::string &request) = 0;
   };
-
-  // TODO: add batch calls
 
   class JsonRpcClient {
   public:
@@ -188,4 +185,4 @@ namespace jsonrpccpp {
       }
     }
   };
-} // namespace jsonrpccpp
+} // namespace jsonrpccxx

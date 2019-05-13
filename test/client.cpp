@@ -6,7 +6,7 @@
 #define TEST_MODULE "[client]"
 
 using namespace std;
-using namespace jsonrpccpp;
+using namespace jsonrpccxx;
 using namespace Catch::Matchers;
 
 bool has_key(const json &v, const std::string &key) { return v.find(key) != v.end(); }

@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace jsonrpccpp {
+namespace jsonrpccxx {
   typedef nlohmann::json json;
   class JsonRpcException : public std::exception {
   public:
@@ -28,4 +28,4 @@ namespace jsonrpccpp {
     json data;
     std::string err;
   };
-} // namespace jsonrpccpp
+} // namespace jsonrpccxx
