@@ -1,4 +1,5 @@
 #include "catch/catch.hpp"
+#include "testserverconnector.hpp"
 #include <iostream>
 #include <jsonrpccxx/server.hpp>
 
@@ -7,67 +8,6 @@ using namespace std;
 using namespace Catch::Matchers;
 
 #define TEST_MODULE "[server]"
-
-class TestServerConnector {
-public:
-  TestServerConnector(JsonRpcServer &handler) : handler(handler) {}
-
-  void SendRawRequest(const string &request) { this->raw_response = handler.HandleRequest(request); }
-
-  void SendRequest(const json &request) { SendRawRequest(request.dump()); }
-
-  json BuildMethodCall(json id, const string &name, const json &params) { return {{"id", id}, {"method", name}, {"params", params}, {"jsonrpc", "2.0"}}; }
-
-  void CallMethod(json id, const string &name, const json &params) { SendRequest(BuildMethodCall(id, name, params)); }
-
-  json BuildNotificationCall(const string &name, const json &params) { return {{"method", name}, {"params", params}, {"jsonrpc", "2.0"}}; }
-
-  void CallNotification(const string &name, const json &params) { SendRequest(BuildNotificationCall(name, params)); }
-
-  json VerifyMethodResult(json id) {
-    json result = json::parse(this->raw_response);
-    return VerifyMethodResult(id, result);
-  }
-
-  static json VerifyMethodResult(json id, json &result) {
-    REQUIRE(!has_key(result, "error"));
-    REQUIRE(result["jsonrpc"] == "2.0");
-    REQUIRE(result["id"] == id);
-    REQUIRE(has_key(result, "result"));
-    return result["result"];
-  }
-
-  json VerifyBatchResponse() {
-    json result = json::parse(raw_response);
-    REQUIRE(result.is_array());
-    return result;
-  }
-
-  void VerifyNotificationResult() { VerifyNotificationResult(this->raw_response); }
-
-  static void VerifyNotificationResult(string &raw_response) { REQUIRE(raw_response == ""); }
-
-  json VerifyMethodError(int code, string message, json id) {
-    json error = json::parse(this->raw_response);
-    return VerifyMethodError(code, message, id, error);
-  }
-
-  static json VerifyMethodError(int code, string message, json id, json &result) {
-    REQUIRE(!has_key(result, "result"));
-    REQUIRE(result["jsonrpc"] == "2.0");
-    REQUIRE(result["id"] == id);
-    REQUIRE(has_key_type(result, "error", json::value_t::object));
-    REQUIRE(has_key_type(result["error"], "code", json::value_t::number_integer));
-    REQUIRE(result["error"]["code"] == code);
-    REQUIRE(has_key_type(result["error"], "message", json::value_t::string));
-    REQUIRE_THAT(result["error"]["message"], Contains(message));
-    return result["error"];
-  }
-
-private:
-  JsonRpcServer &handler;
-  string raw_response;
-};
 
 struct Server2 {
   JsonRpc2Server server;
@@ -235,5 +175,5 @@ TEST_CASE_METHOD(Server2, "v2_batch") {
 
   connector.SendRawRequest("[]");
   batchresponse = connector.VerifyBatchResponse();
-  REQUIRE(batchresponse.size() == 0);
+  REQUIRE(batchresponse.empty());
 }

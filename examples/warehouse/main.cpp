@@ -10,7 +10,7 @@ using namespace std;
 
 class WareHouseClient {
 public:
-  WareHouseClient(JsonRpcClient &client) : client(client) {}
+  explicit WareHouseClient(JsonRpcClient &client) : client(client) {}
   bool AddProduct(const Product &p) { return client.CallMethod<bool>(1, "AddProduct", {p}); }
   Product GetProduct(const std::string &id) { return client.CallMethod<Product>(1, "GetProduct", {id}); }
 
@@ -35,7 +35,7 @@ int main() {
   Product p2 = appClient.GetProduct("0xff");
   cout << "Found product: " << p2.name << "\n";
   try {
-    Product p3 = appClient.GetProduct("0xff2");
+    appClient.GetProduct("0xff2");
   } catch (JsonRpcException &e) {
     cerr << "Error finding product: " << e.what() << "\n";
     return 1;

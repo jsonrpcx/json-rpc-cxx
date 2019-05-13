@@ -85,7 +85,7 @@ namespace jsonrpccxx {
 
   class BatchClient : public JsonRpcClient {
   public:
-    BatchClient(IClientConnector &connector) : JsonRpcClient(connector, version::v2) {}
+    explicit BatchClient(IClientConnector &connector) : JsonRpcClient(connector, version::v2) {}
     BatchResponse BatchCall(const BatchRequest &request) {
       try {
         json response = json::parse(connector.Send(request.Build().dump()));
