@@ -8,7 +8,6 @@
 
 namespace jsonrpccxx {
   enum class version { v1, v2 };
-
   typedef std::vector<json> positional_parameter;
   typedef std::map<std::string, json> named_parameter;
   typedef std::variant<int, std::string> id_type;
@@ -23,8 +22,10 @@ namespace jsonrpccxx {
     JsonRpcClient(IClientConnector &connector, version v) : connector(connector), v(v) {}
     virtual ~JsonRpcClient() = default;
 
-    JsonRpcResponse CallMethod(const id_type &id, const std::string &name, const positional_parameter &params = {}) { return call_method(id, name, params); }
-    JsonRpcResponse CallMethodNamed(const id_type &id, const std::string &name, const named_parameter &params = {}) { return call_method(id, name, params); }
+    template <typename T>
+    T CallMethod(const id_type &id, const std::string &name, const positional_parameter &params = {}) { return call_method(id, name, params).result.get<T>(); }
+    template <typename T>
+    T CallMethodNamed(const id_type &id, const std::string &name, const named_parameter &params = {}) { return call_method(id, name, params).result.get<T>(); }
 
     void CallNotification(const std::string &name, const positional_parameter &params = {}) { call_notification(name, params); }
     void CallNotificationNamed(const std::string &name, const named_parameter &params = {}) { call_notification(name, params); }
