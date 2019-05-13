@@ -14,7 +14,7 @@ namespace jsonrpccxx {
   typedef std::variant<int, std::string> id_type;
 
   struct JsonRpcResponse {
-    std::string id;
+    id_type id;
     json result;
   };
 
@@ -56,7 +56,10 @@ namespace jsonrpccxx {
           throw JsonRpcException::fromJson(response["error"]);
         }
         if (has_key(response, "result") && has_key(response, "id")) {
-          return JsonRpcResponse{response["id"].get<std::string>(), response["result"].get<json>()};
+          if (response["id"].type() == json::value_t::string)
+            return JsonRpcResponse{response["id"].get<std::string>(), response["result"].get<json>()};
+          else
+            return JsonRpcResponse{response["id"].get<int>(), response["result"].get<json>()};
         }
         throw JsonRpcException(-32603, R"(invalid server response: neither "result" nor "error" fields found)");
       } catch (json::parse_error &e) {

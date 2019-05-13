@@ -23,7 +23,7 @@ TBD
 ### Installation
 TBD, probably vcpkg and header only
 ### Examples
-Examples can be found in [src/examples](src/examples)
+Examples can be found in [src/examples](jsonrpccxx/examples)
 
 ## Design goals
 - Easy to use interface
