@@ -35,20 +35,26 @@ TEST_CASE("batchrequest", TEST_MODULE) {
   BatchRequest br;
   TestClientConnector c;
   json request = br.AddMethodCall(1, "some_method1", {"value1"})
+                     .AddMethodCall("1", "some_method1", {"value1"})
                      .AddNamedMethodCall(2, "some_method2", {{"param1", "value1"}})
+                     .AddNamedMethodCall("2", "some_method2", {{"param1", "value1"}})
                      .AddNotificationCall("some_notification1", {"value2"})
                      .AddNamedNotificationCall("some_notification2", {{"param2", "value2"}})
                      .Build();
 
   CHECK(request.is_array());
-  CHECK(request.size() == 4);
+  CHECK(request.size() == 6);
   c.Send(request[0].dump());
   c.VerifyMethodRequest(version::v2, "some_method1", 1);
   c.Send(request[1].dump());
-  c.VerifyMethodRequest(version::v2, "some_method2", 2);
+  c.VerifyMethodRequest(version::v2, "some_method1", "1");
   c.Send(request[2].dump());
-  c.VerifyNotificationRequest(version::v2, "some_notification1");
+  c.VerifyMethodRequest(version::v2, "some_method2", 2);
   c.Send(request[3].dump());
+  c.VerifyMethodRequest(version::v2, "some_method2", "2");
+  c.Send(request[4].dump());
+  c.VerifyNotificationRequest(version::v2, "some_notification1");
+  c.Send(request[5].dump());
   c.VerifyNotificationRequest(version::v2, "some_notification2");
 }
 

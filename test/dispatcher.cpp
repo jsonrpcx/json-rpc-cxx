@@ -20,6 +20,7 @@ TEST_CASE("add and invoke positional", TEST_MODULE) {
 
   procCache = "";
   CHECK(d.Add("some notification", GetHandle(&some_procedure)));
+  CHECK(!d.Add("some notification", GetHandle(&some_procedure)));
   d.InvokeNotification("some notification", {"some string"});
   CHECK(procCache == "some string");
 }
@@ -63,6 +64,24 @@ TEST_CASE("error on invoking unsupported named parameter", TEST_MODULE) {
   CHECK(d.Add("some notification", GetHandle(&some_procedure)));
   json p = {{"param", "some string"}};
   REQUIRE_THROWS_WITH(d.InvokeNotification("some notification", p), Contains("invalid parameter: procedure doesn't support named parameter"));
+}
+
+TEST_CASE("passing invalid literal as param", TEST_MODULE) {
+    Dispatcher d;
+    CHECK(d.Add("some method", GetHandle(&add_function)));
+    REQUIRE_THROWS_WITH(d.InvokeMethod("some method", true), Contains("invalid request: params field must be an array, object"));
+}
+
+TEST_CASE("dispatching unknown procedures", TEST_MODULE) {
+    Dispatcher d;
+    REQUIRE_THROWS_WITH(d.InvokeMethod("some method", {1}), Contains("method not found"));
+    REQUIRE_THROWS_WITH(d.InvokeNotification("some notification", {1}), Contains("notification not found"));
+}
+
+TEST_CASE("invalid param types", TEST_MODULE) {
+    Dispatcher d;
+    CHECK(d.Add("some method", GetHandle(&add_function)));
+    CHECK_THROWS_WITH(d.InvokeMethod("some method", {"string1", "string2"}), Contains("invalid parameter: must be unsigned integer, but is string for parameter 0"));
 }
 
 // TODO: avoid signed, unsigned bool invocations
