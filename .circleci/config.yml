@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: Installing GCC and CMake
-          command: 'apt-get update && apt-get install -y gcc-7 cmake lcov curl'
+          command: 'apt-get update && apt-get install -y gcc g++ cmake lcov curl'
       - run:
           name: Build
           command: cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON -DCODE_COVERAGE=ON . && cmake --build .
