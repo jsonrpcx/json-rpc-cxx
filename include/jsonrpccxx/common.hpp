@@ -12,16 +12,13 @@ namespace jsonrpccxx {
   static inline bool valid_id(const json &request) {
     return has_key(request, "id") && (request["id"].is_number() || request["id"].is_string() || request["id"].is_null());
   }
-  static inline bool valid_id_not_null(const json &request) { return has_key(request, "id") && (request["id"].is_number() || request["id"].is_string());}
+  static inline bool valid_id_not_null(const json &request) { return has_key(request, "id") && (request["id"].is_number() || request["id"].is_string()); }
 
   class JsonRpcException : public std::exception {
   public:
-    JsonRpcException(int code, const std::string &message) noexcept : code(code), message(message), data(nullptr) {
-      err = std::to_string(code) + ": " + message;
-    }
-    JsonRpcException(int code, const std::string &message, const json &data) noexcept : code(code), message(message), data(data) {
-      err = std::to_string(code) + ": " + message + ", data: " + data.dump();
-    }
+    JsonRpcException(int code, const std::string &message) noexcept : code(code), message(message), data(nullptr), err(std::to_string(code) + ": " + message) {}
+    JsonRpcException(int code, const std::string &message, const json &data) noexcept
+        : code(code), message(message), data(data), err(std::to_string(code) + ": " + message + ", data: " + data.dump()) {}
 
     int Code() const { return code; }
     const std::string &Message() const { return message; }
@@ -29,7 +26,7 @@ namespace jsonrpccxx {
 
     const char *what() const noexcept override { return err.c_str(); }
 
-    static inline JsonRpcException fromJson(const json&value) {
+    static inline JsonRpcException fromJson(const json &value) {
       bool has_code = has_key_type(value, "code", json::value_t::number_integer);
       bool has_message = has_key_type(value, "message", json::value_t::string);
       bool has_data = has_key(value, "data");
