@@ -18,6 +18,8 @@ A [JSON-RPC](https://www.jsonrpc.org/) (1.0 & 2.0) framework implemented in C++1
 - Cross-platform (Windows, Linux, OSX)
 
 ## Installation
+- Copy [include/jsonrpccxx](include) to your include path
+- Alternatively use CMake install mechanism
 ```
 mkdir build && cd build
 cmake ..
@@ -27,8 +29,6 @@ sudo make install
 
 ## Usage
 - [examples/warehouse/main.cpp](examples/warehouse/main.cpp)
-
-
 
 ## Design goals
 - Easy to use interface
