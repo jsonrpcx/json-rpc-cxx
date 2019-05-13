@@ -74,8 +74,7 @@ namespace jsonrpccxx {
 
     bool HasErrors() { return !errors.empty() || !nullIds.empty(); }
     const std::vector<size_t> GetInvalidIndexes() { return nullIds; }
-    json GetAt(size_t index) { return response[index]; }
-    const json& Response() { return response; }
+    const json& GetResponse() { return response; }
 
   private:
     json response;

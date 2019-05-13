@@ -10,7 +10,7 @@ if(CODE_COVERAGE)
     target_link_libraries(coverage_config INTERFACE --coverage)
 endif()
 
-add_executable(jsonrpccpp-test test/main.cpp test/client.cpp test/typemapper.cpp test/dispatcher.cpp test/server.cpp test/batchclient.cpp)
+add_executable(jsonrpccpp-test test/main.cpp test/client.cpp test/typemapper.cpp test/dispatcher.cpp test/server.cpp test/batchclient.cpp test/testclientconnector.hpp)
 target_include_directories(jsonrpccpp-test PUBLIC vendor src)
 target_link_libraries(jsonrpccpp-test coverage_config)
 

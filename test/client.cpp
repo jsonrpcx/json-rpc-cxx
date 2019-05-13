@@ -1,6 +1,7 @@
 #include "client.hpp"
 #include "catch/catch.hpp"
 #include "common.hpp"
+#include "testclientconnector.hpp"
 #include <iostream>
 
 #define TEST_MODULE "[client]"
@@ -8,55 +9,6 @@
 using namespace std;
 using namespace jsonrpccxx;
 using namespace Catch::Matchers;
-
-class TestClientConnector : public IClientConnector {
-public:
-  json request;
-  string raw_response;
-
-  std::string Send(const std::string &r) override {
-    this->request = json::parse(r);
-    return raw_response;
-  }
-
-  void SetResult(const json &result) {
-    json response = {{"jsonrpc", "2.0"}, {"id", "1"}, {"result", result}};
-    raw_response = response.dump();
-  }
-
-  void SetError(const JsonRpcException &e) {
-    json response = {{"jsonrpc", "2.0"}, {"id", "1"}};
-    if (!e.Data().empty()) {
-      response["error"] = {{"code", e.Code()}, {"message", e.Message()}, {"data", e.Data()}};
-    } else {
-      response["error"] = {{"code", e.Code()}, {"message", e.Message()}};
-    }
-    raw_response = response.dump();
-  }
-
-  void VerifyMethodRequest(version version, const string &name, json id) {
-    CHECK(request["method"] == name);
-    CHECK(request["id"] == id);
-    if (version == version::v2) {
-      CHECK(request["jsonrpc"] == "2.0");
-    } else {
-      CHECK(!has_key(request, "jsonrpc"));
-      CHECK(has_key(request, "params"));
-    }
-  }
-
-  void VerifyNotificationRequest(version version, const string &name) {
-    CHECK(request["method"] == name);
-    if (version == version::v2) {
-      CHECK(request["jsonrpc"] == "2.0");
-      CHECK(!has_key(request, "id"));
-    } else {
-      CHECK(!has_key(request, "jsonrpc"));
-      CHECK(request["id"].is_null());
-      CHECK(has_key(request, "params"));
-    }
-  }
-};
 
 struct F {
   TestClientConnector c;
@@ -322,4 +274,4 @@ void from_json(const json &j, product2 &p) {
   j.at("category").get_to(p.cat);
 }
 
-//TODO: test cases with return type mapping and param mapping for v1/v2 method and notification
+// TODO: test cases with return type mapping and param mapping for v1/v2 method and notification

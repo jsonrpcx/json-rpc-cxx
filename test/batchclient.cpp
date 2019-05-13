@@ -20,11 +20,13 @@ TEST_CASE("batchresponse_parsing", TEST_MODULE) {
   CHECK(br.Get<string>("1") == "someresultstring");
   REQUIRE_THROWS_WITH(br.Get<string>(1), Contains("no result found for id 1"));
   CHECK(br.Get<int>("2") == 33);
+  CHECK(br.Get<int>("2") == 33);
   REQUIRE_THROWS_WITH(br.Get<int>("1"), Contains("type must be number, but is string"));
   REQUIRE_THROWS_WITH(br.Get<string>("3"), Contains("-111: the error message"));
   REQUIRE_THROWS_WITH(br.Get<string>(nullptr), Contains("no result found for id null"));
 
   CHECK(br.GetInvalidIndexes().size() == 2);
-  CHECK(br.GetAt(br.GetInvalidIndexes()[0])["error"]["code"] == -112);
-  CHECK(br.GetAt(br.GetInvalidIndexes()[1]) == 3);
+  CHECK(br.GetResponse().size() == 5);
+  CHECK(br.GetResponse()[br.GetInvalidIndexes()[0]]["error"]["code"] == -112);
+  CHECK(br.GetResponse()[br.GetInvalidIndexes()[1]] == 3);
 }
