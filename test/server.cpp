@@ -27,6 +27,8 @@ TEST_CASE_METHOD(Server2, "v2_malformed_requests", TEST_MODULE) {
 
   connector.SendRawRequest("dfasdf");
   connector.VerifyMethodError(-32700, "parse error", nullptr);
+  connector.SendRawRequest("true");
+  connector.VerifyMethodError(-32600, "invalid request: expected array or object", nullptr);
 
   connector.SendRequest({{"id", true}, {"method", name}, {"params", params}, {"jsonrpc", "2.0"}});
   connector.VerifyMethodError(-32600, "invalid request: id field must be a number, string or null", nullptr);
@@ -115,6 +117,7 @@ TEST_CASE_METHOD(Server2, "v2_invocations", TEST_MODULE) {
   REQUIRE(!server.Add("dirty_method2", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
   REQUIRE(!server.Add("rpc.something", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
   REQUIRE(!server.Add("rpc.", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
+  REQUIRE(!server.Add("rpc.somenotification", GetHandle(&TestServer::dirty_notification, t), {"a", "b"}));
   REQUIRE(server.Add("rpc", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
 
   connector.CallMethod(1, "add_function", {{"a", 3}, {"b", 4}});

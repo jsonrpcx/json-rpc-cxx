@@ -51,7 +51,7 @@ namespace jsonrpccxx {
         throw JsonRpcException(-32601, "method not found: " + name);
       }
       try {
-        return method->second(normalizeParameter(name, params));
+        return method->second(normalize_parameter(name, params));
       } catch (json::type_error &e) {
         throw JsonRpcException(-32602, "invalid parameter: " + std::string(e.what()));
       } catch (JsonRpcException &e) {
@@ -65,7 +65,7 @@ namespace jsonrpccxx {
         throw JsonRpcException(-32601, "notification not found: " + name);
       }
       try {
-        notification->second(normalizeParameter(name, params));
+        notification->second(normalize_parameter(name, params));
       } catch (json::type_error &e) {
         throw JsonRpcException(-32602, "invalid parameter: " + std::string(e.what()));
       } catch (JsonRpcException &e) {
@@ -73,7 +73,13 @@ namespace jsonrpccxx {
       }
     }
 
-    inline json normalizeParameter(const std::string &name, const json &params) {
+  private:
+    std::map<std::string, MethodHandle> methods;
+    std::map<std::string, NotificationHandle> notifications;
+    std::map<std::string, NamedParamMapping> mapping;
+
+    inline bool contains(const std::string &name) { return (methods.find(name) != methods.end() || notifications.find(name) != notifications.end()); }
+    inline json normalize_parameter(const std::string &name, const json &params) {
       if (params.type() == json::value_t::array) {
         return params;
       } else if (params.type() == json::value_t::object) {
@@ -91,11 +97,5 @@ namespace jsonrpccxx {
       }
       throw JsonRpcException(-32600, "invalid request: params field must be an array, object");
     }
-
-  private:
-    std::map<std::string, MethodHandle> methods;
-    std::map<std::string, NotificationHandle> notifications;
-    std::map<std::string, NamedParamMapping> mapping;
-    inline bool contains(const std::string &name) { return (methods.find(name) != methods.end() || notifications.find(name) != notifications.end()); }
   };
 } // namespace jsonrpccxx
