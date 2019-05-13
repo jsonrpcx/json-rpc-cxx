@@ -1,4 +1,5 @@
 #include "catch/catch.hpp"
+#include "testclientconnector.hpp"
 #include <iostream>
 #include <jsonrpccxx/batchclient.hpp>
 
@@ -8,7 +9,7 @@ using namespace std;
 using namespace jsonrpccxx;
 using namespace Catch::Matchers;
 
-TEST_CASE("batchresponse_parsing", TEST_MODULE) {
+TEST_CASE("batchresponse", TEST_MODULE) {
   BatchResponse br({{{"jsonrpc", "2.0"}, {"id", "1"}, {"result", "someresultstring"}},
                     {{"jsonrpc", "2.0"}, {"id", "2"}, {"result", 33}},
                     {{"jsonrpc", "2.0"}, {"id", "3"}, {"error", {{"code", -111}, {"message", "the error message"}}}},
@@ -28,4 +29,43 @@ TEST_CASE("batchresponse_parsing", TEST_MODULE) {
   CHECK(br.GetResponse().size() == 5);
   CHECK(br.GetResponse()[br.GetInvalidIndexes()[0]]["error"]["code"] == -112);
   CHECK(br.GetResponse()[br.GetInvalidIndexes()[1]] == 3);
+}
+
+TEST_CASE("batchrequest", TEST_MODULE) {
+  BatchRequest br;
+  TestClientConnector c;
+  json request = br.AddMethodCall(1, "some_method1", {"value1"})
+                     .AddNamedMethodCall(2, "some_method2", {{"param1", "value1"}})
+                     .AddNotificationCall("some_notification1", {"value2"})
+                     .AddNamedNotificationCall("some_notification2", {{"param2", "value2"}})
+                     .Build();
+
+  CHECK(request.is_array());
+  CHECK(request.size() == 4);
+  c.Send(request[0].dump());
+  c.VerifyMethodRequest(version::v2, "some_method1", 1);
+  c.Send(request[1].dump());
+  c.VerifyMethodRequest(version::v2, "some_method2", 2);
+  c.Send(request[2].dump());
+  c.VerifyNotificationRequest(version::v2, "some_notification1");
+  c.Send(request[3].dump());
+  c.VerifyNotificationRequest(version::v2, "some_notification2");
+}
+
+TEST_CASE("batchclient", TEST_MODULE) {
+  TestClientConnector c;
+  BatchClient client(c);
+  c.SetBatchResult({TestClientConnector::BuildResult("result1", 1), TestClientConnector::BuildResult(33, 2)});
+
+  BatchRequest r;
+  r.AddMethodCall(1, "some_method", {"value1"});
+  r.AddMethodCall(2, "some_method", {"value2"});
+  BatchResponse response = client.BatchCall(r);
+  CHECK(response.Get<string>(1) == "result1");
+  CHECK(response.Get<int>(2) == 33);
+
+  c.SetBatchResult("{}");
+  CHECK_THROWS_WITH(client.BatchCall(r), Contains("invalid JSON response from server: expected array"));
+  c.raw_response = "somestring";
+  CHECK_THROWS_WITH(client.BatchCall(r), Contains("invalid JSON response from server") && Contains("parse_error"));
 }

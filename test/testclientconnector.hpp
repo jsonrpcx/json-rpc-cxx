@@ -19,6 +19,14 @@ public:
     return raw_response;
   }
 
+  void SetBatchResult(const json &result) {
+    raw_response = result.dump();
+  }
+
+  static json BuildResult(const json &result, int id) {
+    return {{"jsonrpc", "2.0"}, {"id", id}, {"result", result}};
+  }
+
   void SetResult(const json &result) {
     json response = {{"jsonrpc", "2.0"}, {"id", "1"}, {"result", result}};
     raw_response = response.dump();
