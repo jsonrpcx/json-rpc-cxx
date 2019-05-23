@@ -1,4 +1,5 @@
 #include "inmemoryconnector.hpp"
+#include "cpphttplibconnector.hpp"
 #include "warehouseapp.hpp"
 
 #include <iostream>
@@ -18,17 +19,9 @@ private:
   JsonRpcClient &client;
 };
 
-int main() {
-  JsonRpc2Server rpcServer;
-  InMemoryConnector connector(rpcServer);
-  JsonRpcClient client(connector, version::v2);
-
-  // Bindings
+void doWarehouseStuff(IClientConnector &clientConnector) {
+  JsonRpcClient client(clientConnector, version::v2);
   WareHouseClient appClient(client);
-  WarehouseServer app;
-  rpcServer.Add("GetProduct", GetHandle(&WarehouseServer::GetProduct, app), {"id"});
-  rpcServer.Add("AddProduct", GetHandle(&WarehouseServer::AddProduct, app), {"product"});
-
   Product p = {"0xff", 22.4, "Product 1", category::cash_carry};
   cout << "Adding product: " << std::boolalpha << appClient.AddProduct(p) << "\n";
 
@@ -38,7 +31,27 @@ int main() {
     appClient.GetProduct("0xff2");
   } catch (JsonRpcException &e) {
     cerr << "Error finding product: " << e.what() << "\n";
-    return 1;
   }
+}
+
+int main() {
+  JsonRpc2Server rpcServer;
+
+  // Bindings
+  WarehouseServer app;
+  rpcServer.Add("GetProduct", GetHandle(&WarehouseServer::GetProduct, app), {"id"});
+  rpcServer.Add("AddProduct", GetHandle(&WarehouseServer::AddProduct, app), {"product"});
+
+  cout << "Running in-memory example" << "\n";
+  InMemoryConnector inMemoryConnector(rpcServer);
+  doWarehouseStuff(inMemoryConnector);
+
+  cout << "Running http example" << "\n";
+  CppHttpLibServerConnector httpServer(rpcServer, 8484);
+  cout << "Starting http server: " << std::boolalpha << httpServer.StartListening() << "\n";
+  CppHttpLibClientConnector httpClient("localhost", 8484);
+  std::this_thread::sleep_for(0.5s);
+  doWarehouseStuff(httpClient);
+
   return 0;
 }

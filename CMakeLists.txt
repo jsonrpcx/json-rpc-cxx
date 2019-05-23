@@ -29,9 +29,11 @@ if (COMPILE_TESTS)
 endif ()
 
 if (COMPILE_EXAMPLES)
+    find_package(Threads)
     add_executable(example-warehouse examples/warehouse/main.cpp examples/warehouse/warehouseapp.cpp examples/warehouse/types.h examples/inmemoryconnector.hpp)
-    target_link_libraries(example-warehouse json-rpc-cxx)
+    target_link_libraries(example-warehouse json-rpc-cxx Threads::Threads)
     target_include_directories(example-warehouse PRIVATE vendor examples)
+    add_test(NAME example COMMAND example-warehouse)
 endif ()
 
 

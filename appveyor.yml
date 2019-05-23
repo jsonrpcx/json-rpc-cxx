@@ -6,3 +6,4 @@ build_script:
   - cmake -DCOMPILE_TESTS=ON -DCOMPILE_EXAMPLES=ON .
   - cmake --build .
   - Debug\jsonrpccpp-test.exe -s
+  - Debug\example-warehouse.exe
