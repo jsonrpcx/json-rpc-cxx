@@ -14,9 +14,9 @@
    viewBox="0 0 100 100"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="icon.svg"
-   inkscape:export-filename="C:\Users\Peter Spiess-Knafl\git\gitlab\libjson-rpc-cpp\doc\icon.png"
+   inkscape:export-filename="/Users/cinemast/git/json-rpc-cxx/doc/icon.png"
    inkscape:export-xdpi="68.854332"
    inkscape:export-ydpi="68.854332">
   <defs
@@ -29,15 +29,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4962188"
-     inkscape:cx="239.71732"
-     inkscape:cy="-111.221"
+     inkscape:cx="100.70022"
+     inkscape:cy="236.32175"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
      width="100mm"
-     inkscape:window-width="1918"
-     inkscape:window-height="2054"
-     inkscape:window-x="1910"
+     inkscape:window-width="1680"
+     inkscape:window-height="1006"
+     inkscape:window-x="39"
      inkscape:window-y="0"
      inkscape:window-maximized="0" />
   <metadata
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -94,18 +94,5 @@
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Ebene 3">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
-       x="52.451416"
-       y="-33.357605"
-       id="text4842"
-       transform="rotate(43.02871)"><tspan
-         sodipodi:role="line"
-         x="52.451416"
-         y="-33.357605"
-         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:22.57777786px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';fill:#d40000;stroke-width:0.26458332;"
-         id="tspan4846">WIP</tspan></text>
-  </g>
+     inkscape:label="Ebene 3" />
 </svg>

@@ -1,5 +1,3 @@
-**THIS IS A WORK IN PROGRESS PROJECT**
-
 # json-rpc-cxx
 
 
@@ -53,7 +51,7 @@ This framework is licensed under [MIT](LICENSE).
 ### Dependencies
 
 -   [nlohmann's JSON for modern C++](https://github.com/nlohmann/json) is licensed under MIT.
--   [Catch](https://github.com/catchorg/Catch2) is licensed under BSL-1.0.
+-   Optional: [Catch](https://github.com/catchorg/Catch2) is licensed under BSL-1.0.
 
 ## Developer information
 
