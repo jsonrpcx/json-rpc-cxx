@@ -24,6 +24,7 @@ namespace jsonrpccxx {
   constexpr json::value_t GetType(type<T>) {
     return json::value_t::object;
   }
+  constexpr json::value_t GetType(type<void>) { return json::value_t::null; }
   constexpr json::value_t GetType(type<std::string>) { return json::value_t::string; }
   constexpr json::value_t GetType(type<bool>) { return json::value_t::boolean; }
   constexpr json::value_t GetType(type<float>) { return json::value_t::number_float; }
@@ -148,6 +149,22 @@ namespace jsonrpccxx {
   //
   // Mapping for classes
   //
+  template <typename T, typename ReturnType, typename... ParamTypes>
+  MethodHandle methodHandle(ReturnType (T::*method)(ParamTypes...), T &instance) {
+    std::function<ReturnType(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> ReturnType {
+      return (instance.*method)(std::forward<ParamTypes>(params)...);
+    };
+    return methodHandle(function);
+  }
+
+  template <typename T, typename... ParamTypes>
+  NotificationHandle notificationHandle(void (T::*method)(ParamTypes...), T &instance) {
+    std::function<void(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> void {
+      return (instance.*method)(std::forward<ParamTypes>(params)...);
+    };
+    return notificationHandle(function);
+  }
+
   template <typename T, typename ReturnType, typename... ParamTypes>
   MethodHandle GetHandle(ReturnType (T::*method)(ParamTypes...), T &instance) {
     std::function<ReturnType(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> ReturnType {
