@@ -33,9 +33,11 @@ namespace jsonrpccxx {
   constexpr json::value_t GetType(type<short>) { return json::value_t::number_integer; }
   constexpr json::value_t GetType(type<int>) { return json::value_t::number_integer; }
   constexpr json::value_t GetType(type<long>) { return json::value_t::number_integer; }
+  constexpr json::value_t GetType(type<long long>) { return json::value_t::number_integer; }
   constexpr json::value_t GetType(type<unsigned short>) { return json::value_t::number_unsigned; }
   constexpr json::value_t GetType(type<unsigned int>) { return json::value_t::number_unsigned; }
   constexpr json::value_t GetType(type<unsigned long>) { return json::value_t::number_unsigned; }
+  constexpr json::value_t GetType(type<unsigned long long>) { return json::value_t::number_unsigned; }
 
   inline std::string type_name(json::value_t t) {
     switch (t) {
