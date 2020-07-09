@@ -4,6 +4,8 @@
 enum class category { order, cash_carry };
 
 struct Product {
+public:
+  Product() : id(), price(), name(), cat() {}
   std::string id;
   double price;
   std::string name;
