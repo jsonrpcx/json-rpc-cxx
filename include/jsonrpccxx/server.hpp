@@ -7,6 +7,7 @@
 namespace jsonrpccxx {
   class JsonRpcServer {
   public:
+    JsonRpcServer() : dispatcher() {}
     virtual ~JsonRpcServer() = default;
     virtual std::string HandleRequest(const std::string &request) = 0;
 
