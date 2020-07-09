@@ -22,12 +22,17 @@ private:
 
 class CppHttpLibServerConnector {
 public:
-  explicit CppHttpLibServerConnector(jsonrpccxx::JsonRpcServer &server, int port) : server(server), port(port) {
+  explicit CppHttpLibServerConnector(jsonrpccxx::JsonRpcServer &server, int port) :
+    thread(),
+    server(server),
+    httpServer(),
+    port(port) {
     httpServer.Post("/jsonrpc", [&](const httplib::Request &req, httplib::Response &res) {
       res.status = 200;
       res.set_content(server.HandleRequest(req.body), "application/json");
     });
   }
+
   virtual ~CppHttpLibServerConnector() { StopListening(); }
 
   bool StartListening() {
