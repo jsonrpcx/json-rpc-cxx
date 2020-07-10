@@ -27,10 +27,10 @@ public:
     server(server),
     httpServer(),
     port(port) {
-    httpServer.Post("/jsonrpc", [&](const httplib::Request &req, httplib::Response &res) {
-      res.status = 200;
-      res.set_content(server.HandleRequest(req.body), "application/json");
-    });
+    httpServer.Post("/jsonrpc",
+		    [this](const httplib::Request &req, httplib::Response &res) {
+		      this->PostAction(req, res);
+		    });
   }
 
   virtual ~CppHttpLibServerConnector() { StopListening(); }
@@ -54,4 +54,10 @@ private:
   jsonrpccxx::JsonRpcServer &server;
   httplib::Server httpServer;
   int port;
+
+  void PostAction(const httplib::Request &req,
+		  httplib::Response &res) {
+    res.status = 200;
+    res.set_content(this->server.HandleRequest(req.body), "application/json");
+  }
 };
