@@ -13,7 +13,7 @@ struct F {
   TestClientConnector c;
   JsonRpcClient clientV1;
   JsonRpcClient clientV2;
-  F() : clientV1(c, version::v1), clientV2(c, version::v2) {}
+  F() : c(), clientV1(c, version::v1), clientV2(c, version::v2) {}
 };
 
 TEST_CASE_METHOD(F, "v2_method_noparams", TEST_MODULE) {
