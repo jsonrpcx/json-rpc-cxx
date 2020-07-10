@@ -9,7 +9,11 @@ TEST_CASE_METHOD(IntegrationTest, "warehouse_test", TEST_MODULE) {
   rpcServer.Add("GetProduct", GetHandle(&WarehouseServer::GetProduct, app));
   rpcServer.Add("AddProduct", GetHandle(&WarehouseServer::AddProduct, app));
 
-  Product p = {"0xff", 22.4, "Product 1", category::cash_carry};
+  Product p;
+  p.id = "0xff";
+  p.price = 22.4;
+  p.name = "Product 1";
+  p.cat = category::cash_carry;
   CHECK(client.CallMethod<bool>(1, "AddProduct", {p}));
 
   Product p2 = client.CallMethod<Product>(1, "GetProduct", {"0xff"});
