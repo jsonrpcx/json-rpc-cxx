@@ -13,7 +13,7 @@ struct Server2 {
   JsonRpc2Server server;
   TestServerConnector connector;
 
-  Server2() : connector(server) {}
+  Server2() : server(), connector(server) {}
 };
 
 TEST_CASE_METHOD(Server2, "v2_method_not_found", TEST_MODULE) {
@@ -61,9 +61,10 @@ TEST_CASE_METHOD(Server2, "v2_malformed_requests", TEST_MODULE) {
 
 enum class category { ord, cc };
 
-NLOHMANN_JSON_SERIALIZE_ENUM(category, {{category::ord, "order"}, {category::cc, "cc"}});
+NLOHMANN_JSON_SERIALIZE_ENUM(category, {{category::ord, "order"}, {category::cc, "cc"}})
 
 struct product {
+  product() : id(), price(), name(), cat() {}
   int id;
   double price;
   string name;
@@ -75,6 +76,8 @@ void from_json(const json &j, product &p);
 
 class TestServer {
 public:
+  TestServer() : param_proc(), param_a(), param_b(), catalog() {}
+
   unsigned int add_function(unsigned int a, unsigned int b) {
     this->param_a = a;
     this->param_b = b;
@@ -95,8 +98,8 @@ public:
   };
 
   void dirty_notification() { throw std::exception(); }
-  int dirty_method(int a, int b) { throw std::exception(); }
-  int dirty_method2(int a, int b) { throw - 7; }
+  int dirty_method(int a, int b) { to_string(a+b); throw std::exception(); }
+  int dirty_method2(int a, int b) { throw (a+b); }
 
   string param_proc;
   int param_a;
