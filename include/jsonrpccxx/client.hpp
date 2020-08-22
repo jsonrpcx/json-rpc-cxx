@@ -23,7 +23,9 @@ namespace jsonrpccxx {
     virtual ~JsonRpcClient() = default;
 
     template <typename T>
-    T CallMethod(const id_type &id, const std::string &name, const positional_parameter &params = {}) { return call_method(id, name, params).result.get<T>(); }
+    T CallMethod(const id_type &id, const std::string &name) { return call_method(id, name, json::object()).result.get<T>(); }
+     template <typename T>
+    T CallMethod(const id_type &id, const std::string &name, const positional_parameter &params) { return call_method(id, name, params).result.get<T>(); }
     template <typename T>
     T CallMethodNamed(const id_type &id, const std::string &name, const named_parameter &params = {}) { return call_method(id, name, params).result.get<T>(); }
 
@@ -47,6 +49,8 @@ namespace jsonrpccxx {
         j["jsonrpc"] = "2.0";
       }
       if (!params.empty() && !params.is_null()) {
+        j["params"] = params;
+      } else if (params.is_array()) {
         j["params"] = params;
       } else if (v == version::v1) {
         j["params"] = nullptr;

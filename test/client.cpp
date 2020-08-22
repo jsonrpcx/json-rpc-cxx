@@ -18,11 +18,6 @@ struct F {
 
 TEST_CASE_METHOD(F, "v2_method_noparams", TEST_MODULE) {
   c.SetResult(true);
-  clientV2.CallMethod<json>("000-000-000", "some.method_1", {});
-  c.VerifyMethodRequest(version::v2, "some.method_1", "000-000-000");
-  CHECK(!has_key(c.request, "params"));
-
-  c.SetResult(true);
   clientV2.CallMethod<json>("000-000-000", "some.method_1");
   c.VerifyMethodRequest(version::v2, "some.method_1", "000-000-000");
   CHECK(!has_key(c.request, "params"));
@@ -30,14 +25,41 @@ TEST_CASE_METHOD(F, "v2_method_noparams", TEST_MODULE) {
 
 TEST_CASE_METHOD(F, "v1_method_noparams", TEST_MODULE) {
   c.SetResult(true);
-  clientV1.CallMethod<json>(37, "some.method_1", {});
-  c.VerifyMethodRequest(version::v1, "some.method_1", 37);
-  CHECK(has_key_type(c.request, "params", json::value_t::null));
-
-  c.SetResult(true);
   clientV1.CallMethod<json>(37, "some.method_1");
   c.VerifyMethodRequest(version::v1, "some.method_1", 37);
   CHECK(has_key_type(c.request, "params", json::value_t::null));
+}
+
+TEST_CASE_METHOD(F, "v2_method_call_params_empty", TEST_MODULE) {
+  c.SetResult(true);
+  clientV2.CallMethod<json>("1", "some.method_1", {});
+  c.VerifyMethodRequest(version::v2, "some.method_1", "1");
+  CHECK(c.request["params"].is_array());
+  CHECK(c.request["params"].empty());
+  CHECK(c.request["params"].dump() == "[]");
+
+  c.SetResult(true);
+  clientV2.CallMethod<json>("1", "some.method_1", json::array());
+  c.VerifyMethodRequest(version::v2, "some.method_1", "1");
+  CHECK(c.request["params"].is_array());
+  CHECK(c.request["params"].empty());
+  CHECK(c.request["params"].dump() == "[]");
+}
+
+TEST_CASE_METHOD(F, "v1_method_call_params_empty", TEST_MODULE) {
+  c.SetResult(true);
+  clientV1.CallMethod<json>("1", "some.method_1", {});
+  c.VerifyMethodRequest(version::v1, "some.method_1", "1");
+  CHECK(c.request["params"].is_array());
+  CHECK(c.request["params"].empty());
+  CHECK(c.request["params"].dump() == "[]");
+
+  c.SetResult(true);
+  clientV1.CallMethod<json>("1", "some.method_1", json::array());
+  c.VerifyMethodRequest(version::v1, "some.method_1", "1");
+  CHECK(c.request["params"].is_array());
+  CHECK(c.request["params"].empty());
+  CHECK(c.request["params"].dump() == "[]");
 }
 
 TEST_CASE_METHOD(F, "v2_method_call_params_byname", TEST_MODULE) {
