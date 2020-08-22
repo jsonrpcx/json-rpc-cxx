@@ -15,6 +15,15 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_library(coverage_config INTERFACE)
 
+# Warning options for the compiler
+string(
+  APPEND _warning_opts
+  "$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-Wall;-Wextra;-Weffc++;-Werror;>"
+  "$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-Wthread-safety;-Wpedantic;>"
+  "$<$<CXX_COMPILER_ID:GNU>:-pedantic;-pedantic-errors;>"
+  )
+
+
 if (COMPILE_TESTS)
     if (CODE_COVERAGE)
         message("Enabled coverage flags")
@@ -22,6 +31,7 @@ if (COMPILE_TESTS)
         target_link_libraries(coverage_config INTERFACE --coverage)
     endif ()
     add_executable(jsonrpccpp-test test/main.cpp test/client.cpp test/typemapper.cpp test/dispatcher.cpp test/server.cpp test/batchclient.cpp test/testclientconnector.hpp examples/warehouse/warehouseapp.cpp test/warehouseapp.cpp)
+    target_compile_options(jsonrpccpp-test PUBLIC "${_warning_opts}")
     target_include_directories(jsonrpccpp-test PRIVATE vendor examples)
     target_link_libraries(jsonrpccpp-test coverage_config json-rpc-cxx)
     enable_testing()
@@ -31,8 +41,10 @@ endif ()
 if (COMPILE_EXAMPLES)
     find_package(Threads)
     add_executable(example-warehouse examples/warehouse/main.cpp examples/warehouse/warehouseapp.cpp examples/warehouse/types.h examples/inmemoryconnector.hpp)
+    target_compile_options(example-warehouse PUBLIC "${_warning_opts}")
     target_link_libraries(example-warehouse json-rpc-cxx Threads::Threads)
-    target_include_directories(example-warehouse PRIVATE vendor examples)
+    target_include_directories(example-warehouse SYSTEM PRIVATE vendor)
+    target_include_directories(example-warehouse PRIVATE examples)
     add_test(NAME example COMMAND example-warehouse)
 endif ()
 

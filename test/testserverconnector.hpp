@@ -8,7 +8,7 @@ using namespace Catch::Matchers;
 
 class TestServerConnector {
 public:
-    explicit TestServerConnector(JsonRpcServer &handler) : handler(handler) {}
+  explicit TestServerConnector(JsonRpcServer &handler) : handler(handler), raw_response() {}
 
     void SendRawRequest(const string &request) { this->raw_response = handler.HandleRequest(request); }
     void SendRequest(const json &request) { SendRawRequest(request.dump()); }

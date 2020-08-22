@@ -46,7 +46,7 @@ namespace jsonrpccxx {
 
   class BatchResponse {
   public:
-    explicit BatchResponse(json &&response) : response(response) {
+    explicit BatchResponse(json &&response) : response(response), results(), errors(), nullIds() {
       for (auto &[key, value] : response.items()) {
         if (value.is_object() && valid_id_not_null(value) && has_key(value, "result")) {
           results[value["id"]] = std::stoi(key);

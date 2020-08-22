@@ -12,6 +12,11 @@ namespace jsonrpccxx {
 
   class Dispatcher {
   public:
+    Dispatcher() :
+      methods(),
+      notifications(),
+      mapping() {}
+
     bool Add(const std::string &name, MethodHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
       if (contains(name))
         return false;

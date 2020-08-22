@@ -85,21 +85,34 @@ TEST_CASE("test incorrect params", TEST_MODULE) {
 enum class category { order, cash_carry };
 
 struct product {
+  product() : id(), price(), name(), cat() {}
   int id;
   double price;
   string name;
   category cat;
 };
 
-NLOHMANN_JSON_SERIALIZE_ENUM(category, {{category::order, "order"}, {category::cash_carry, "cc"}});
+NLOHMANN_JSON_SERIALIZE_ENUM(category, {{category::order, "order"}, {category::cash_carry, "cc"}})
 
 void to_json(json &j, const product &p) { j = json{{"id", p.id}, {"price", p.price}, {"name", p.name}, {"category", p.cat}}; }
 
 product get_product(int id) {
-  if (id == 1)
-    return product{1, 22.50, "some product", category::order};
-  else if (id == 2)
-    return product{2, 55.50, "some product 2", category::cash_carry};
+  if (id == 1) {
+    product p;
+    p.id = 1;
+    p.price = 22.50;
+    p.name = "some product";
+    p.cat = category::order;
+    return p;
+  }
+  else if (id == 2) {
+    product p;
+    p.id = 2;
+    p.price = 55.50;
+    p.name = "some product 2";
+    p.cat = category::cash_carry;
+    return p;
+  }
   throw JsonRpcException(-50000, "product not found");
 }
 
@@ -131,7 +144,7 @@ static vector<product> catalog;
 bool add_products(const vector<product> &products) {
   std::copy(products.begin(), products.end(), std::back_inserter(catalog));
   return true;
-};
+}
 
 TEST_CASE("test with custom params", TEST_MODULE) {
   MethodHandle mh = GetHandle(&add_products);

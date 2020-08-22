@@ -11,6 +11,8 @@ using namespace std;
 
 class TestClientConnector : public IClientConnector {
 public:
+  TestClientConnector() : request(), raw_response() {}
+
   json request;
   string raw_response;
 

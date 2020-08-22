@@ -22,7 +22,11 @@ private:
 void doWarehouseStuff(IClientConnector &clientConnector) {
   JsonRpcClient client(clientConnector, version::v2);
   WareHouseClient appClient(client);
-  Product p = {"0xff", 22.4, "Product 1", category::cash_carry};
+  Product p;
+  p.id = "0xff";
+  p.price = 22.4;
+  p.name = "Product 1";
+  p.cat = category::cash_carry;
   cout << "Adding product: " << std::boolalpha << appClient.AddProduct(p) << "\n";
 
   Product p2 = appClient.GetProduct("0xff");
