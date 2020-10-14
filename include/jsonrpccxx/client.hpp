@@ -59,6 +59,8 @@ namespace jsonrpccxx {
         json response = json::parse(connector.Send(j.dump()));
         if (has_key_type(response, "error", json::value_t::object)) {
           throw JsonRpcException::fromJson(response["error"]);
+        } else if (has_key_type(response, "error", json::value_t::string)) {
+          throw JsonRpcException(-32603, response["error"]);
         }
         if (has_key(response, "result") && has_key(response, "id")) {
           if (response["id"].type() == json::value_t::string)
