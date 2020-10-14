@@ -1,5 +1,4 @@
 #pragma once
-#include "common.hpp"
 #include "nlohmann/json.hpp"
 #include <exception>
 #include <string>
