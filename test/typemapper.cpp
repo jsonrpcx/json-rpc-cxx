@@ -146,6 +146,21 @@ bool add_products(const vector<product> &products) {
   return true;
 }
 
+string enumToString(const category& category) {
+  switch (category) {
+  case category::cash_carry: return "cash&carry";
+  case category::order: return "online-order";
+  default: return "unknown category";
+  }
+}
+
+TEST_CASE("test with enum as top level parameter", TEST_MODULE) {
+  MethodHandle  mh = GetHandle(&enumToString);
+
+  json params = R"(["cc"])"_json;
+  CHECK(mh(params) == "cash&carry");
+}
+
 TEST_CASE("test with custom params", TEST_MODULE) {
   MethodHandle mh = GetHandle(&add_products);
   catalog.clear();
