@@ -4,6 +4,7 @@
 #include "nlohmann/json.hpp"
 #include <functional>
 #include <limits>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -174,6 +175,20 @@ namespace jsonrpccxx {
   MethodHandle GetHandle(ReturnType (T::*method)(ParamTypes...), T &instance) {
     std::function<ReturnType(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> ReturnType {
       return (instance.*method)(std::forward<ParamTypes>(params)...);
+    };
+    return GetHandle(function);
+  }
+  template <typename T, typename ReturnType, typename... ParamTypes>
+  MethodHandle GetHandle(ReturnType (T::*method)(ParamTypes...), std::shared_ptr<T> &instance) {
+    std::function<ReturnType(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> ReturnType {
+      return ((instance.get())->*method)(std::forward<ParamTypes>(params)...);
+    };
+    return GetHandle(function);
+  }
+  template <typename T, typename... ParamTypes>
+  NotificationHandle GetHandle(void (T::*method)(ParamTypes...), std::shared_ptr<T> &instance) {
+    std::function<void(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> void {
+      return ((instance.get())->*method)(std::forward<ParamTypes>(params)...);
     };
     return GetHandle(function);
   }
