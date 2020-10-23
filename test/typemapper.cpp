@@ -55,6 +55,19 @@ TEST_CASE("test class member explicit binding", TEST_MODULE) {
   CHECK(notifyResult == "Hello world: someone");
 }
 
+TEST_CASE("test class member binding from shared_ptr", TEST_MODULE) {
+  std::shared_ptr<SomeClass> instance;
+  MethodHandle mh = GetHandle(&SomeClass::add, instance);
+  CHECK(mh(R"([3, 4])"_json) == 7);
+
+  notifyResult = "";
+  NotificationHandle mh2 = GetHandle(&SomeClass::notify, instance);
+  CHECK(notifyResult.empty());
+  mh2(R"(["someone"])"_json);
+  CHECK(notifyResult == "Hello world: someone");
+}
+
+
 TEST_CASE("test incorrect params", TEST_MODULE) {
   SomeClass instance;
   MethodHandle mh = GetHandle(&SomeClass::add, instance);
