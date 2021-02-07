@@ -1,10 +1,11 @@
 
 #include "../examples/warehouse/warehouseapp.hpp"
+#include "doctest/doctest.h"
 #include "integrationtest.hpp"
 
 #define TEST_MODULE "[integration]"
 
-TEST_CASE_METHOD(IntegrationTest, "warehouse_test", TEST_MODULE) {
+TEST_CASE_FIXTURE(IntegrationTest, "warehouse_test") {
   WarehouseServer app;
   rpcServer.Add("GetProduct", GetHandle(&WarehouseServer::GetProduct, app));
   rpcServer.Add("AddProduct", GetHandle(&WarehouseServer::AddProduct, app));

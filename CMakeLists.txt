@@ -13,7 +13,6 @@ add_library(json-rpc-cxx INTERFACE)
 target_include_directories(json-rpc-cxx INTERFACE include)
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-add_library(coverage_config INTERFACE)
 
 # Warning options for the compiler
 string(
@@ -33,7 +32,7 @@ if (COMPILE_TESTS)
     add_executable(jsonrpccpp-test test/main.cpp test/client.cpp test/typemapper.cpp test/dispatcher.cpp test/server.cpp test/batchclient.cpp test/testclientconnector.hpp examples/warehouse/warehouseapp.cpp test/warehouseapp.cpp test/common.cpp)
     target_compile_options(jsonrpccpp-test PUBLIC "${_warning_opts}")
     target_include_directories(jsonrpccpp-test PRIVATE vendor examples)
-    target_link_libraries(jsonrpccpp-test coverage_config json-rpc-cxx)
+    target_link_libraries(jsonrpccpp-test json-rpc-cxx)
     enable_testing()
     add_test(NAME test COMMAND jsonrpccpp-test)
 endif ()

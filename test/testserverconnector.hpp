@@ -1,10 +1,9 @@
 #pragma once
-#include <catch/catch.hpp>
+#include "doctest/doctest.h"
 #include <jsonrpccxx/server.hpp>
 
 using namespace jsonrpccxx;
 using namespace std;
-using namespace Catch::Matchers;
 
 class TestServerConnector {
 public:
@@ -53,7 +52,7 @@ public:
         REQUIRE(has_key_type(result["error"], "code", json::value_t::number_integer));
         REQUIRE(result["error"]["code"] == code);
         REQUIRE(has_key_type(result["error"], "message", json::value_t::string));
-        REQUIRE_THAT(result["error"]["message"], Contains(message));
+        REQUIRE_EQ(result["error"]["message"], message);
         return result["error"];
     }
 
