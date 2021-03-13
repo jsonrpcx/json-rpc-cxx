@@ -6,6 +6,7 @@
 using namespace jsonrpccxx;
 using namespace std;
 using namespace Catch::Matchers;
+using namespace Catch::literals;
 
 #define TEST_MODULE "[typemapper]"
 
@@ -184,8 +185,8 @@ TEST_CASE("test with custom params", TEST_MODULE) {
 }
 
 unsigned long unsigned_add(unsigned int a, int b) { return a + b; }
-
 unsigned long unsigned_add2(unsigned short a, short b) { return a + b; }
+float float_add(float a, float b) { return a+b; }
 
 TEST_CASE("test number range checking", TEST_MODULE) {
   MethodHandle mh = GetHandle(&unsigned_add);
@@ -203,4 +204,11 @@ TEST_CASE("test number range checking", TEST_MODULE) {
   unsigned short max_ss = numeric_limits<short>::max();
   CHECK(mh2({max_su, max_ss}) == max_su + max_ss);
   REQUIRE_THROWS_WITH(mh2({max_su, max_su}), Contains("invalid parameter: exceeds value range of integer"));
+}
+
+TEST_CASE("test auto conversion of float to int passed to float method", TEST_MODULE) {
+  MethodHandle mh = GetHandle(&float_add);
+  CHECK(mh(R"([3,3])"_json) == 6.0);
+  CHECK(mh(R"([3.0,3.0])"_json) == 6.0);
+  CHECK(mh(R"([3.1,3.2])"_json) == 6.3_a);
 }
