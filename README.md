@@ -51,7 +51,7 @@ This framework is licensed under [MIT](LICENSE).
 ### Dependencies
 
 -   [nlohmann's JSON for modern C++](https://github.com/nlohmann/json) is licensed under MIT.
--   Optional: [Catch](https://github.com/catchorg/Catch2) is licensed under BSL-1.0.
+-   Optional: [doctest](https://github.com/onqtam/doctest) is licensed under MIT.
 
 ## Developer information
 
