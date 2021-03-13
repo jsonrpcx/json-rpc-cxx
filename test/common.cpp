@@ -1,14 +1,10 @@
-#include "catch/catch.hpp"
-#include <iostream>
+#include "doctest/doctest.h"
 #include <jsonrpccxx/common.hpp>
-
-#define TEST_MODULE "[common]"
 
 using namespace std;
 using namespace jsonrpccxx;
-using namespace Catch::Matchers;
 
-TEST_CASE("exception error type", TEST_MODULE) {
+TEST_CASE("exception error type") {
   CHECK(JsonRpcException(-32700, "").Type() == parse_error);
   CHECK(JsonRpcException(-32600, "").Type() == invalid_request);
   CHECK(JsonRpcException(-32601, "").Type() == method_not_found);
