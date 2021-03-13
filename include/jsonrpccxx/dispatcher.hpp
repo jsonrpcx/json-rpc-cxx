@@ -53,12 +53,12 @@ namespace jsonrpccxx {
     json InvokeMethod(const std::string &name, const json &params) {
       auto method = methods.find(name);
       if (method == methods.end()) {
-        throw JsonRpcException(-32601, "method not found: " + name);
+        throw JsonRpcException(method_not_found, "method not found: " + name);
       }
       try {
         return method->second(normalize_parameter(name, params));
       } catch (json::type_error &e) {
-        throw JsonRpcException(-32602, "invalid parameter: " + std::string(e.what()));
+        throw JsonRpcException(invalid_params, "invalid parameter: " + std::string(e.what()));
       } catch (JsonRpcException &e) {
         throw process_type_error(name, e);
       }
@@ -67,12 +67,12 @@ namespace jsonrpccxx {
     void InvokeNotification(const std::string &name, const json &params) {
       auto notification = notifications.find(name);
       if (notification == notifications.end()) {
-        throw JsonRpcException(-32601, "notification not found: " + name);
+        throw JsonRpcException(method_not_found, "notification not found: " + name);
       }
       try {
         notification->second(normalize_parameter(name, params));
       } catch (json::type_error &e) {
-        throw JsonRpcException(-32602, "invalid parameter: " + std::string(e.what()));
+        throw JsonRpcException(invalid_params, "invalid parameter: " + std::string(e.what()));
       } catch (JsonRpcException &e) {
         throw process_type_error(name, e);
       }
@@ -89,18 +89,18 @@ namespace jsonrpccxx {
         return params;
       } else if (params.type() == json::value_t::object) {
         if (mapping.find(name) == mapping.end()) {
-          throw JsonRpcException(-32602, "invalid parameter: procedure doesn't support named parameter");
+          throw JsonRpcException(invalid_params, "invalid parameter: procedure doesn't support named parameter");
         }
         json result;
         for (auto const &p : mapping[name]) {
           if (params.find(p) == params.end()) {
-            throw JsonRpcException(-32602, "invalid parameter: missing named parameter \"" + p + "\"");
+            throw JsonRpcException(invalid_params, "invalid parameter: missing named parameter \"" + p + "\"");
           }
           result.push_back(params[p]);
         }
         return result;
       }
-      throw JsonRpcException(-32600, "invalid request: params field must be an array, object");
+      throw JsonRpcException(invalid_request, "invalid request: params field must be an array, object");
     }
   };
 } // namespace jsonrpccxx

@@ -60,7 +60,7 @@ namespace jsonrpccxx {
         if (has_key_type(response, "error", json::value_t::object)) {
           throw JsonRpcException::fromJson(response["error"]);
         } else if (has_key_type(response, "error", json::value_t::string)) {
-          throw JsonRpcException(-32603, response["error"]);
+          throw JsonRpcException(internal_error, response["error"]);
         }
         if (has_key(response, "result") && has_key(response, "id")) {
           if (response["id"].type() == json::value_t::string)
@@ -68,9 +68,9 @@ namespace jsonrpccxx {
           else
             return JsonRpcResponse{response["id"].get<int>(), response["result"].get<json>()};
         }
-        throw JsonRpcException(-32603, R"(invalid server response: neither "result" nor "error" fields found)");
+        throw JsonRpcException(internal_error, R"(invalid server response: neither "result" nor "error" fields found)");
       } catch (json::parse_error &e) {
-        throw JsonRpcException(-32700, std::string("invalid JSON response from server: ") + e.what());
+        throw JsonRpcException(parse_error, std::string("invalid JSON response from server: ") + e.what());
       }
     }
 

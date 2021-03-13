@@ -64,12 +64,12 @@ namespace jsonrpccxx {
         try {
           return response[results[id]]["result"].get<T>();
         } catch (json::type_error &e) {
-          throw JsonRpcException(-32700, "invalid return type: " + std::string(e.what()));
+          throw JsonRpcException(parse_error, "invalid return type: " + std::string(e.what()));
         }
       } else if (errors.find(id) != errors.end()) {
         throw JsonRpcException::fromJson(response[errors[id]]["error"]);
       }
-      throw JsonRpcException(-32700, std::string("no result found for id ") + id.dump());
+      throw JsonRpcException(parse_error, std::string("no result found for id ") + id.dump());
     }
 
     bool HasErrors() { return !errors.empty() || !nullIds.empty(); }
@@ -90,11 +90,11 @@ namespace jsonrpccxx {
       try {
         json response = json::parse(connector.Send(request.Build().dump()));
         if (!response.is_array()) {
-          throw JsonRpcException(-32700, std::string("invalid JSON response from server: expected array"));
+          throw JsonRpcException(parse_error, std::string("invalid JSON response from server: expected array"));
         }
         return BatchResponse(std::move(response));
       } catch (json::parse_error &e) {
-        throw JsonRpcException(-32700, std::string("invalid JSON response from server: ") + e.what());
+        throw JsonRpcException(parse_error, std::string("invalid JSON response from server: ") + e.what());
       }
     }
   };

@@ -67,25 +67,25 @@ namespace jsonrpccxx {
   inline void check_param_type(size_t index, const json &x, json::value_t expectedType, typename std::enable_if<std::is_arithmetic<T>::value>::type * = 0) {
     if (expectedType == json::value_t::number_unsigned && x.type() == json::value_t::number_integer) {
       if (x.get<long long int>() < 0)
-        throw JsonRpcException(-32602, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
+        throw JsonRpcException(invalid_params, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
     } else if (x.type() == json::value_t::number_unsigned && expectedType == json::value_t::number_integer) {
       if (x.get<long long unsigned>() > std::numeric_limits<T>::max()) {
-        throw JsonRpcException(-32602, "invalid parameter: exceeds value range of " + type_name(expectedType), index);
+        throw JsonRpcException(invalid_params, "invalid parameter: exceeds value range of " + type_name(expectedType), index);
       }
     }
     else if ((x.type() == json::value_t::number_unsigned || x.type() == json::value_t::number_integer) && expectedType == json::value_t::number_float) {
       if (static_cast<long long int>(x.get<double>()) != x.get<long long int>()) {
-        throw JsonRpcException(-32602, "invalid parameter: exceeds value range of " + type_name(expectedType), index);
+        throw JsonRpcException(invalid_params, "invalid parameter: exceeds value range of " + type_name(expectedType), index);
       }
     } else if (x.type() != expectedType) {
-      throw JsonRpcException(-32602, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
+      throw JsonRpcException(invalid_params, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
     }
   }
 
   template <typename T>
   inline void check_param_type(size_t index, const json &x, json::value_t expectedType, typename std::enable_if<!std::is_arithmetic<T>::value>::type * = 0) {
     if (x.type() != expectedType) {
-      throw JsonRpcException(-32602, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
+      throw JsonRpcException(invalid_params, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
     }
   }
 
@@ -99,7 +99,7 @@ namespace jsonrpccxx {
       size_t formalSize = sizeof...(ParamTypes);
       // TODO: add lenient mode for backwards compatible additional params
       if (actualSize != formalSize) {
-        throw JsonRpcException(-32602, "invalid parameter: expected " + std::to_string(formalSize) + " argument(s), but found " + std::to_string(actualSize));
+        throw JsonRpcException(invalid_params, "invalid parameter: expected " + std::to_string(formalSize) + " argument(s), but found " + std::to_string(actualSize));
       }
       (check_param_type<typename std::decay<ParamTypes>::type>(index, params[index], GetType(type<typename std::decay<ParamTypes>::type>())), ...);
       return method(params[index].get<typename std::decay<ParamTypes>::type>()...);
@@ -133,7 +133,7 @@ namespace jsonrpccxx {
       // TODO: add lenient mode for backwards compatible additional params
       // if ((!allow_unkown_params && actualSize != formalSize) || (allow_unkown_params && actualSize < formalSize)) {
       if (actualSize != formalSize) {
-        throw JsonRpcException(-32602, "invalid parameter: expected " + std::to_string(formalSize) + " argument(s), but found " + std::to_string(actualSize));
+        throw JsonRpcException(invalid_params, "invalid parameter: expected " + std::to_string(formalSize) + " argument(s), but found " + std::to_string(actualSize));
       }
       (check_param_type<typename std::decay<ParamTypes>::type>(index, params[index], GetType(type<typename std::decay<ParamTypes>::type>())), ...);
       method(params[index].get<typename std::decay<ParamTypes>::type>()...);
