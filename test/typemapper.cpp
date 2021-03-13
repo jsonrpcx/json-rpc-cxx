@@ -58,25 +58,25 @@ TEST_CASE("test incorrect params") {
   SomeClass instance;
   MethodHandle mh = GetHandle(&SomeClass::add, instance);
   REQUIRE_THROWS_WITH(mh(R"(["3", "4"])"_json), "-32602: invalid parameter: must be integer, but is string, data: 0");
-  REQUIRE_THROWS_WITH(mh(R"([true, true])"_json), "must be integer, but is boolean");
-  REQUIRE_THROWS_WITH(mh(R"([null, 3])"_json), "must be integer, but is null");
-  REQUIRE_THROWS_WITH(mh(R"([{"a": true}, 3])"_json), "must be integer, but is object");
-  REQUIRE_THROWS_WITH(mh(R"([[2,3], 3])"_json), "must be integer, but is array");
-  REQUIRE_THROWS_WITH(mh(R"([3.4, 3])"_json), "must be integer, but is float");
-  REQUIRE_THROWS_WITH(mh(R"([4])"_json), "expected 2 argument(s), but found 1");
-  REQUIRE_THROWS_WITH(mh(R"([5, 6, 5])"_json), "expected 2 argument(s), but found 3");
+  REQUIRE_THROWS_WITH(mh(R"([true, true])"_json), "-32602: invalid parameter: must be integer, but is boolean, data: 0");
+  REQUIRE_THROWS_WITH(mh(R"([null, 3])"_json), "-32602: invalid parameter: must be integer, but is null, data: 0");
+  REQUIRE_THROWS_WITH(mh(R"([{"a": true}, 3])"_json), "-32602: invalid parameter: must be integer, but is object, data: 0");
+  REQUIRE_THROWS_WITH(mh(R"([[2,3], 3])"_json), "-32602: invalid parameter: must be integer, but is array, data: 0");
+  REQUIRE_THROWS_WITH(mh(R"([3.4, 3])"_json), "-32602: invalid parameter: must be integer, but is float, data: 0");
+  REQUIRE_THROWS_WITH(mh(R"([4])"_json), "-32602: invalid parameter: expected 2 argument(s), but found 1");
+  REQUIRE_THROWS_WITH(mh(R"([5, 6, 5])"_json), "-32602: invalid parameter: expected 2 argument(s), but found 3");
 
   notifyResult = "";
   NotificationHandle mh2 = GetHandle(&SomeClass::notify, instance);
-  REQUIRE_THROWS_WITH(mh2(R"([33])"_json), "must be string, but is unsigned integer");
-  REQUIRE_THROWS_WITH(mh2(R"([-33])"_json), "must be string, but is integer");
-  REQUIRE_THROWS_WITH(mh2(R"(["someone", "anotherone"])"_json), "expected 1 argument(s), but found 2");
-  REQUIRE_THROWS_WITH(mh2(R"([])"_json), "expected 1 argument(s), but found 0");
-  REQUIRE_THROWS_WITH(mh2(R"([true])"_json), "must be string, but is boolean");
-  REQUIRE_THROWS_WITH(mh2(R"([null])"_json), "must be string, but is null");
-  REQUIRE_THROWS_WITH(mh2(R"([3.4])"_json), "must be string, but is float");
-  REQUIRE_THROWS_WITH(mh2(R"([{"a": true}])"_json), "must be string, but is object");
-  REQUIRE_THROWS_WITH(mh2(R"([["some string"]])"_json), "must be string, but is array");
+  REQUIRE_THROWS_WITH(mh2(R"([33])"_json), "-32602: invalid parameter: must be string, but is unsigned integer, data: 0");
+  REQUIRE_THROWS_WITH(mh2(R"([-33])"_json), "-32602: invalid parameter: must be string, but is integer, data: 0");
+  REQUIRE_THROWS_WITH(mh2(R"(["someone", "anotherone"])"_json), "-32602: invalid parameter: expected 1 argument(s), but found 2");
+  REQUIRE_THROWS_WITH(mh2(R"([])"_json), "-32602: invalid parameter: expected 1 argument(s), but found 0");
+  REQUIRE_THROWS_WITH(mh2(R"([true])"_json), "-32602: invalid parameter: must be string, but is boolean, data: 0");
+  REQUIRE_THROWS_WITH(mh2(R"([null])"_json), "-32602: invalid parameter: must be string, but is null, data: 0");
+  REQUIRE_THROWS_WITH(mh2(R"([3.4])"_json), "-32602: invalid parameter: must be string, but is float, data: 0");
+  REQUIRE_THROWS_WITH(mh2(R"([{"a": true}])"_json), "-32602: invalid parameter: must be string, but is object, data: 0");
+  REQUIRE_THROWS_WITH(mh2(R"([["some string"]])"_json), "-32602: invalid parameter: must be string, but is array, data: 0");
 
   CHECK(notifyResult.empty());
 }
@@ -129,7 +129,7 @@ TEST_CASE("test with custom struct return") {
   CHECK(j["price"] == 55.5);
   CHECK(j["category"] == category::cash_carry);
 
-  REQUIRE_THROWS_WITH(mh(R"([444])"_json), "product not found");
+  REQUIRE_THROWS_WITH(mh(R"([444])"_json), "-50000: product not found");
 }
 
 void from_json(const json &j, product &p) {
@@ -179,7 +179,7 @@ TEST_CASE("test with custom params") {
   CHECK(catalog[1].cat == category::cash_carry);
 
   REQUIRE_THROWS_WITH(mh(R"([[{"id": 1, "price": 22.50}]])"_json), "[json.exception.out_of_range.403] key 'name' not found");
-  REQUIRE_THROWS_WITH(mh(R"([{"id": 1, "price": 22.50}])"_json), "must be array, but is object");
+  REQUIRE_THROWS_WITH(mh(R"([{"id": 1, "price": 22.50}])"_json), "-32602: invalid parameter: must be array, but is object, data: 0");
 }
 
 unsigned long unsigned_add(unsigned int a, int b) { return a + b; }
@@ -201,7 +201,7 @@ TEST_CASE("test number range checking") {
   unsigned short max_su = numeric_limits<unsigned short>::max();
   unsigned short max_ss = numeric_limits<short>::max();
   CHECK(mh2({max_su, max_ss}) == max_su + max_ss);
-  REQUIRE_THROWS_WITH(mh2({max_su, max_su}), "invalid parameter: exceeds value range of integer");
+  REQUIRE_THROWS_WITH(mh2({max_su, max_su}), "-32602: invalid parameter: exceeds value range of integer, data: 1");
 }
 
 TEST_CASE("test auto conversion of float to int passed to float method") {

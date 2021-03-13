@@ -52,7 +52,8 @@ public:
         REQUIRE(has_key_type(result["error"], "code", json::value_t::number_integer));
         REQUIRE(result["error"]["code"] == code);
         REQUIRE(has_key_type(result["error"], "message", json::value_t::string));
-        REQUIRE_EQ(result["error"]["message"], message);
+        REQUIRE(result["error"]["message"].get<std::string>().find(message) != std::string::npos);
+
         return result["error"];
     }
 
