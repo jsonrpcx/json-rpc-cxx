@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../examples/inmemoryconnector.hpp"
-#include "catch/catch.hpp"
 #include <jsonrpccxx/client.hpp>
 #include <jsonrpccxx/server.hpp>
 

@@ -1,11 +1,10 @@
-#include "catch/catch.hpp"
+#include "doctest/doctest.h"
 #include "testserverconnector.hpp"
 #include <iostream>
 #include <jsonrpccxx/server.hpp>
 
 using namespace jsonrpccxx;
 using namespace std;
-using namespace Catch::Matchers;
 
 #define TEST_MODULE "[server]"
 
@@ -16,12 +15,12 @@ struct Server2 {
   Server2() : server(), connector(server) {}
 };
 
-TEST_CASE_METHOD(Server2, "v2_method_not_found", TEST_MODULE) {
+TEST_CASE_FIXTURE(Server2, "v2_method_not_found") {
   connector.CallMethod(1, "some_invalid_method", nullptr);
   connector.VerifyMethodError(-32601, "method not found: some_invalid_method", 1);
 }
 
-TEST_CASE_METHOD(Server2, "v2_malformed_requests", TEST_MODULE) {
+TEST_CASE_FIXTURE(Server2, "v2_malformed_requests") {
   string name = "some_method";
   json params = nullptr;
 
@@ -107,7 +106,7 @@ public:
   vector<product> catalog;
 };
 
-TEST_CASE_METHOD(Server2, "v2_invocations", TEST_MODULE) {
+TEST_CASE_FIXTURE(Server2, "v2_invocations") {
   TestServer t;
   REQUIRE(server.Add("add_function", GetHandle(&TestServer::add_function, t), {"a", "b"}));
   REQUIRE(server.Add("div_function", GetHandle(&TestServer::div_function, t), {"a", "b"}));
@@ -159,7 +158,7 @@ TEST_CASE_METHOD(Server2, "v2_invocations", TEST_MODULE) {
   connector.VerifyMethodError(-32603, "internal server error", 1);
 }
 
-TEST_CASE_METHOD(Server2, "v2_batch") {
+TEST_CASE_FIXTURE(Server2, "v2_batch") {
   TestServer t;
   REQUIRE(server.Add("add_function", GetHandle(&TestServer::add_function, t), {"a", "b"}));
 
