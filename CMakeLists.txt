@@ -26,6 +26,7 @@ string(
 if (COMPILE_TESTS)
     if (CODE_COVERAGE)
         message("Enabled coverage flags")
+        add_library(coverage_config INTERFACE)
         target_compile_options(coverage_config INTERFACE -O0 -g --coverage)
         target_link_libraries(coverage_config INTERFACE --coverage)
     endif ()
