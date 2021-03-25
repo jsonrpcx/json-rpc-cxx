@@ -5,7 +5,7 @@ jobs:
   "build-linux-gcc":
     docker:
       - image: "debian:buster"
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - run:
@@ -28,7 +28,7 @@ jobs:
   "build-linux-clang":
     docker:
       - image: "debian:buster"
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - run:
@@ -46,7 +46,6 @@ jobs:
   "build-osx-clang":
     macos:
       xcode: "10.2.1"
-    parallelism: 4
     steps:
       - checkout
       - run:
