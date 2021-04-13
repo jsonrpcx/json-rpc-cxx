@@ -210,3 +210,16 @@ TEST_CASE("test auto conversion of float to int passed to float method") {
   CHECK(mh(R"([3.0,3.0])"_json) == 6.0);
   CHECK(mh(R"([3.1,3.2])"_json) == doctest::Approx(6.3));
 }
+
+json arbitrary_json(const json& value) {
+  return value;
+}
+
+TEST_CASE("test json method handles without specific types") {
+  MethodHandle mh = GetHandle(&arbitrary_json);
+  CHECK(mh(R"([3,3])"_json) == R"([3,3])"_json);
+  CHECK(mh(R"(true)"_json) == R"(true)"_json);
+  CHECK(mh(R"(3)"_json) == R"(3)"_json);
+  CHECK(mh(R"(3.3)"_json) == R"(3.3)"_json);
+  CHECK(mh(R"("hello")"_json) == R"("hello")"_json);
+}
