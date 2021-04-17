@@ -122,6 +122,13 @@ namespace jsonrpccxx {
     return GetHandle(std::function<ReturnType(ParamTypes...)>(f));
   }
 
+  inline MethodHandle GetUncheckedHandle(std::function<json(const json&)> f) {
+    MethodHandle handle = [f](const Parameters &params) -> json {
+      return f(params);
+    };
+    return handle;
+  }
+
   //
   // Notification mapping
   //
@@ -141,6 +148,8 @@ namespace jsonrpccxx {
     return handle;
   }
 
+
+
   template <typename... ParamTypes>
   NotificationHandle notificationHandle(std::function<void(ParamTypes...)> method) {
     return createNotificationHandle(method, std::index_sequence_for<ParamTypes...>{});
@@ -154,6 +163,13 @@ namespace jsonrpccxx {
   template <typename... ParamTypes>
   NotificationHandle GetHandle(void (*f)(ParamTypes...)) {
     return GetHandle(std::function<void(ParamTypes...)>(f));
+  }
+
+  inline NotificationHandle GetUncheckedNotificationHandle(std::function<void(const json&)> f) {
+    NotificationHandle handle = [f](const Parameters &params) -> void {
+      f(params);
+    };
+    return handle;
   }
 
   //

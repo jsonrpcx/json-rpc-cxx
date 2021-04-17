@@ -215,11 +215,16 @@ json arbitrary_json(const json& value) {
   return value;
 }
 
+void arbitrary_json_notification(const json& value) {
+
+}
+
 TEST_CASE("test json method handles without specific types") {
-  MethodHandle mh = GetHandle(&arbitrary_json);
-  CHECK(mh(R"([3,3])"_json) == R"([3,3])"_json);
-  CHECK(mh(R"(true)"_json) == R"(true)"_json);
-  CHECK(mh(R"(3)"_json) == R"(3)"_json);
-  CHECK(mh(R"(3.3)"_json) == R"(3.3)"_json);
-  CHECK(mh(R"("hello")"_json) == R"("hello")"_json);
+  MethodHandle mh = GetUncheckedHandle(&arbitrary_json);
+  CHECK(mh(R"([3,"string"])"_json) == R"([3,"string"])"_json);;
+  CHECK(mh(R"({"3": "string"})"_json) == R"({"3": "string"})"_json);;
+
+  NotificationHandle nh = GetUncheckedNotificationHandle(&arbitrary_json_notification);
+  nh(R"([3,"string"])"_json);
+  nh(R"(R"({"3": "string"})"_json);
 }
