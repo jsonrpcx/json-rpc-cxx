@@ -6,8 +6,6 @@
 using namespace jsonrpccxx;
 using namespace std;
 
-#define TEST_MODULE "[server]"
-
 struct Server2 {
   JsonRpc2Server server;
   TestServerConnector connector;

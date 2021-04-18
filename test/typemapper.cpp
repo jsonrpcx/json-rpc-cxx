@@ -6,8 +6,6 @@
 using namespace jsonrpccxx;
 using namespace std;
 
-#define TEST_MODULE "[typemapper]"
-
 static string notifyResult = "";
 
 int add(int a, int b) { return a + b; }

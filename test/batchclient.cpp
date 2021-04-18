@@ -3,8 +3,6 @@
 #include <iostream>
 #include <jsonrpccxx/batchclient.hpp>
 
-#define TEST_MODULE "[batch]"
-
 using namespace std;
 using namespace jsonrpccxx;
 
