@@ -215,7 +215,9 @@ json arbitrary_json(const json& value) {
   return value;
 }
 
-void arbitrary_json_notification(const json& value) {}
+void arbitrary_json_notification(const json& value) {
+  to_string(value);
+}
 
 TEST_CASE("test json method handles without specific types") {
   MethodHandle mh = GetUncheckedHandle(&arbitrary_json);
