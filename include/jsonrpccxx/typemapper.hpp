@@ -8,9 +8,8 @@
 #include <vector>
 
 namespace jsonrpccxx {
-  typedef std::vector<json> Parameters;
-  typedef std::function<json(const Parameters &)> MethodHandle;
-  typedef std::function<void(const Parameters &)> NotificationHandle;
+  typedef std::function<json(const json &)> MethodHandle;
+  typedef std::function<void(const json &)> NotificationHandle;
 
   // Workaround due to forbidden partial template function specialisation
   template <typename T>
@@ -89,12 +88,9 @@ namespace jsonrpccxx {
     }
   }
 
-  //
-  // Mapping for methods
-  //
   template <typename ReturnType, typename... ParamTypes, std::size_t... index>
   MethodHandle createMethodHandle(std::function<ReturnType(ParamTypes...)> method, std::index_sequence<index...>) {
-    MethodHandle handle = [method](const Parameters &params) -> json {
+    MethodHandle handle = [method](const json &params) -> json {
       size_t actualSize = params.size();
       size_t formalSize = sizeof...(ParamTypes);
       // TODO: add lenient mode for backwards compatible additional params
@@ -123,7 +119,7 @@ namespace jsonrpccxx {
   }
 
   inline MethodHandle GetUncheckedHandle(std::function<json(const json&)> f) {
-    MethodHandle handle = [f](const Parameters &params) -> json {
+    MethodHandle handle = [f](const json &params) -> json {
       return f(params);
     };
     return handle;
@@ -134,7 +130,7 @@ namespace jsonrpccxx {
   //
   template <typename... ParamTypes, std::size_t... index>
   NotificationHandle createNotificationHandle(std::function<void(ParamTypes...)> method, std::index_sequence<index...>) {
-    NotificationHandle handle = [method](const Parameters &params) -> void {
+    NotificationHandle handle = [method](const json &params) -> void {
       size_t actualSize = params.size();
       size_t formalSize = sizeof...(ParamTypes);
       // TODO: add lenient mode for backwards compatible additional params
@@ -147,8 +143,6 @@ namespace jsonrpccxx {
     };
     return handle;
   }
-
-
 
   template <typename... ParamTypes>
   NotificationHandle notificationHandle(std::function<void(ParamTypes...)> method) {
@@ -166,15 +160,12 @@ namespace jsonrpccxx {
   }
 
   inline NotificationHandle GetUncheckedNotificationHandle(std::function<void(const json&)> f) {
-    NotificationHandle handle = [f](const Parameters &params) -> void {
+    NotificationHandle handle = [f](const json &params) -> void {
       f(params);
     };
     return handle;
   }
 
-  //
-  // Mapping for classes
-  //
   template <typename T, typename ReturnType, typename... ParamTypes>
   MethodHandle methodHandle(ReturnType (T::*method)(ParamTypes...), T &instance) {
     std::function<ReturnType(ParamTypes...)> function = [&instance, method](ParamTypes &&... params) -> ReturnType {
@@ -206,4 +197,4 @@ namespace jsonrpccxx {
     };
     return GetHandle(function);
   }
-} // namespace jsonrpccxx
+}
