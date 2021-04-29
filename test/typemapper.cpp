@@ -6,8 +6,6 @@
 using namespace jsonrpccxx;
 using namespace std;
 
-#define TEST_MODULE "[typemapper]"
-
 static string notifyResult = "";
 
 int add(int a, int b) { return a + b; }
@@ -209,4 +207,23 @@ TEST_CASE("test auto conversion of float to int passed to float method") {
   CHECK(mh(R"([3,3])"_json) == 6.0);
   CHECK(mh(R"([3.0,3.0])"_json) == 6.0);
   CHECK(mh(R"([3.1,3.2])"_json) == doctest::Approx(6.3));
+}
+
+json arbitrary_json(const json& value) {
+  return value;
+}
+
+void arbitrary_json_notification(const json& value) {
+  to_string(value);
+}
+
+TEST_CASE("test json method handles without specific types") {
+  MethodHandle mh = GetUncheckedHandle(&arbitrary_json);
+  CHECK(mh(R"([3,"string"])"_json) == R"([3,"string"])"_json);
+  auto param = R"({"a": "string"})"_json;
+  CHECK(mh(param) == param);
+
+  NotificationHandle nh = GetUncheckedNotificationHandle(&arbitrary_json_notification);
+  nh(R"([3,"string"])"_json);
+  nh(R"({"3": "string"})"_json);
 }

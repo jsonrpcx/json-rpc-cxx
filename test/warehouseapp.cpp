@@ -3,8 +3,6 @@
 #include "doctest/doctest.h"
 #include "integrationtest.hpp"
 
-#define TEST_MODULE "[integration]"
-
 TEST_CASE_FIXTURE(IntegrationTest, "warehouse_test") {
   WarehouseServer app;
   rpcServer.Add("GetProduct", GetHandle(&WarehouseServer::GetProduct, app));

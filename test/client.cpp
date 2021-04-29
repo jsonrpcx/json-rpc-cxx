@@ -3,8 +3,6 @@
 #include <iostream>
 #include <jsonrpccxx/client.hpp>
 
-#define TEST_MODULE "[client]"
-
 using namespace std;
 using namespace jsonrpccxx;
 

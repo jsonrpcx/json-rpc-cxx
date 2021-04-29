@@ -5,8 +5,6 @@
 using namespace jsonrpccxx;
 using namespace std;
 
-#define TEST_MODULE "[dispatcher]"
-
 static string procCache;
 unsigned int add_function(unsigned int a, unsigned int b) { return a + b; }
 void some_procedure(const string &param) { procCache = param; }
