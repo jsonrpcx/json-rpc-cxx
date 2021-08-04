@@ -68,7 +68,7 @@ namespace jsonrpccxx {
       if (x.get<long long int>() < 0)
         throw JsonRpcException(invalid_params, "invalid parameter: must be " + type_name(expectedType) + ", but is " + type_name(x.type()), index);
     } else if (x.type() == json::value_t::number_unsigned && expectedType == json::value_t::number_integer) {
-      if (x.get<long long unsigned>() > std::numeric_limits<T>::max()) {
+      if (x.get<long long unsigned>() > (long long unsigned)std::numeric_limits<T>::max()) {
         throw JsonRpcException(invalid_params, "invalid parameter: exceeds value range of " + type_name(expectedType), index);
       }
     }
