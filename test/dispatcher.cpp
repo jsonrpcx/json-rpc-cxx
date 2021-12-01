@@ -81,4 +81,45 @@ TEST_CASE("invalid param types") {
     CHECK_THROWS_WITH(d.InvokeMethod("some method", {"string1", "string2"}), "-32602: invalid parameter: must be unsigned integer, but is string for parameter 0");
 }
 
+TEST_CASE("checking for method name") {
+    Dispatcher d;
+    CHECK(!d.ContainsMethod("some method"));
+    CHECK(!d.Contains("some method"));
+    CHECK(d.MethodNames().empty());
+
+    CHECK(d.Add("some method", GetHandle(&add_function)));
+    REQUIRE(d.ContainsMethod("some method"));
+    REQUIRE(d.Contains("some method"));
+    CHECK(d.InvokeMethod("some method", {11, 22}) == 33);
+    const auto methodNames = d.MethodNames();
+    CHECK(methodNames.size() == 1U);
+    CHECK(methodNames[0] == "some method");
+
+    CHECK(d.Remove("some method"));
+    CHECK(!d.ContainsMethod("some method"));
+    CHECK(!d.Contains("some method"));
+    CHECK(d.MethodNames().empty());
+}
+
+TEST_CASE("checking for notification name") {
+    Dispatcher d;
+    CHECK(!d.ContainsNotification("some notification"));
+    CHECK(!d.Contains("some notification"));
+    CHECK(d.NotificationNames().empty());
+
+    CHECK(d.Add("some notification", GetHandle(&some_procedure)));
+    REQUIRE(d.ContainsNotification("some notification"));
+    REQUIRE(d.Contains("some notification"));
+    json p = {{"param", "some string"}};
+    d.InvokeNotification("some notification", {"some string"});
+    const auto notificationNames = d.NotificationNames();
+    CHECK(notificationNames.size() == 1U);
+    CHECK(notificationNames[0] == "some notification");
+
+    CHECK(d.Remove("some notification"));
+    CHECK(!d.ContainsNotification("some notification"));
+    CHECK(!d.Contains("some notification"));
+    CHECK(d.NotificationNames().empty());
+}
+
 // TODO: avoid signed, unsigned bool invocations

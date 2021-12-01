@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "dispatcher.hpp"
 #include <string>
+#include <vector>
 
 namespace jsonrpccxx {
   class JsonRpcServer {
@@ -20,6 +21,35 @@ namespace jsonrpccxx {
       if (name.rfind("rpc.", 0) == 0)
         return false;
       return dispatcher.Add(name, callback, mapping);
+    }
+
+    bool ContainsMethod(const std::string &name) {
+      if (name.rfind("rpc.", 0) == 0)
+        return false;
+      return dispatcher.ContainsMethod(name);
+    }
+    bool ContainsNotification(const std::string &name) {
+      if (name.rfind("rpc.", 0) == 0)
+        return false;
+      return dispatcher.ContainsNotification(name);
+    }
+    bool Contains(const std::string &name) {
+      if (name.rfind("rpc.", 0) == 0)
+        return false;
+      return dispatcher.Contains(name);
+    }
+
+    bool Remove(const std::string &name) {
+      if (name.rfind("rpc.", 0) == 0)
+        return false;
+      return dispatcher.Remove(name);
+    }
+
+    inline std::vector<std::string> MethodNames() const {
+        return dispatcher.MethodNames();
+    }
+    inline std::vector<std::string> NotificationNames() const {
+        return dispatcher.NotificationNames();
     }
 
   protected:

@@ -4,6 +4,7 @@
 #include "typemapper.hpp"
 #include <map>
 #include <string>
+#include <vector>
 
 namespace jsonrpccxx {
 
@@ -18,7 +19,7 @@ namespace jsonrpccxx {
       mapping() {}
 
     bool Add(const std::string &name, MethodHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
-      if (contains(name))
+      if (Contains(name))
         return false;
       methods[name] = std::move(callback);
       if (!mapping.empty()) {
@@ -28,13 +29,44 @@ namespace jsonrpccxx {
     }
 
     bool Add(const std::string &name, NotificationHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
-      if (contains(name))
+      if (Contains(name))
         return false;
       notifications[name] = std::move(callback);
       if (!mapping.empty()) {
         this->mapping[name] = mapping;
       }
       return true;
+    }
+
+    inline bool ContainsMethod(const std::string &name) const { return (methods.find(name) != methods.end()); }
+
+    inline bool ContainsNotification(const std::string &name) const { return (notifications.find(name) != notifications.end()); }
+
+    inline bool Contains(const std::string &name) const { return (ContainsMethod(name) || ContainsNotification(name)); }
+
+    bool Remove(const std::string &name) {
+      if (!Contains(name))
+        return false;
+      methods.erase(name);
+      notifications.erase(name);
+      mapping.erase(name);
+      return true;
+    }
+
+    std::vector<std::string> MethodNames() const {
+      std::vector<std::string> names;
+      for(const auto &mapPair: methods) {
+        names.push_back(mapPair.first);
+      }
+      return names;
+    }
+
+    std::vector<std::string> NotificationNames() const {
+      std::vector<std::string> names;
+      for(const auto &mapPair: notifications) {
+        names.push_back(mapPair.first);
+      }
+      return names;
     }
 
     JsonRpcException process_type_error(const std::string &name, JsonRpcException &e) {
@@ -83,7 +115,6 @@ namespace jsonrpccxx {
     std::map<std::string, NotificationHandle> notifications;
     std::map<std::string, NamedParamMapping> mapping;
 
-    inline bool contains(const std::string &name) { return (methods.find(name) != methods.end() || notifications.find(name) != notifications.end()); }
     inline json normalize_parameter(const std::string &name, const json &params) {
       if (params.type() == json::value_t::array) {
         return params;

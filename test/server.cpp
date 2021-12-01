@@ -1,6 +1,7 @@
 #include "doctest/doctest.h"
 #include "testserverconnector.hpp"
 #include <iostream>
+#include <vector>
 #include <jsonrpccxx/server.hpp>
 
 using namespace jsonrpccxx;
@@ -179,4 +180,62 @@ TEST_CASE_FIXTURE(Server2, "v2_batch") {
   connector.SendRawRequest("[]");
   batchresponse = connector.VerifyBatchResponse();
   REQUIRE(batchresponse.empty());
+}
+
+TEST_CASE_FIXTURE(Server2, "v2_check_functions") {
+  TestServer t;
+  CHECK(server.MethodNames().empty());
+  CHECK(server.NotificationNames().empty());
+
+  REQUIRE(server.Add("add_function", GetHandle(&TestServer::add_function, t), {"a", "b"}));
+  REQUIRE(server.Add("div_function", GetHandle(&TestServer::div_function, t), {"a", "b"}));
+  REQUIRE(server.Add("some_procedure", GetHandle(&TestServer::some_procedure, t), {"param"}));
+  REQUIRE(server.Add("add_products", GetHandle(&TestServer::add_products, t), {"products"}));
+  REQUIRE(server.Add("dirty_notification", GetHandle(&TestServer::dirty_notification, t), {"products"}));
+  REQUIRE(server.Add("dirty_method", GetHandle(&TestServer::dirty_method, t), {"a", "b"}));
+  REQUIRE(server.Add("dirty_method2", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
+  REQUIRE(server.Add("rpc", GetHandle(&TestServer::dirty_method2, t), {"a", "b"}));
+
+  CHECK(server.ContainsMethod("add_function"));
+  CHECK(server.ContainsMethod("div_function"));
+  CHECK(server.ContainsMethod("add_products"));
+  CHECK(server.ContainsMethod("dirty_method"));
+  CHECK(server.ContainsMethod("dirty_method2"));
+  CHECK(server.ContainsMethod("rpc"));
+  CHECK(server.ContainsNotification("some_procedure"));
+  CHECK(server.ContainsNotification("dirty_notification"));
+
+  CHECK(server.Contains("add_function"));
+  CHECK(server.Contains("div_function"));
+  CHECK(server.Contains("add_products"));
+  CHECK(server.Contains("dirty_method"));
+  CHECK(server.Contains("dirty_method2"));
+  CHECK(server.Contains("rpc"));
+  CHECK(server.Contains("some_procedure"));
+  CHECK(server.Contains("dirty_notification"));
+
+  const auto methodNames = server.MethodNames();
+  CHECK(methodNames.size() == 6U);
+  CHECK(std::find(methodNames.begin(), methodNames.end(), "add_function") != methodNames.end());
+  CHECK(std::find(methodNames.begin(), methodNames.end(), "div_function") != methodNames.end());
+  CHECK(std::find(methodNames.begin(), methodNames.end(), "add_products") != methodNames.end());
+  CHECK(std::find(methodNames.begin(), methodNames.end(), "dirty_method") != methodNames.end());
+  CHECK(std::find(methodNames.begin(), methodNames.end(), "dirty_method2") != methodNames.end());
+  CHECK(std::find(methodNames.begin(), methodNames.end(), "rpc") != methodNames.end());
+
+  const auto notificationNames = server.NotificationNames();
+  CHECK(notificationNames.size() == 2U);
+  CHECK(std::find(notificationNames.begin(), notificationNames.end(), "some_procedure") != notificationNames.end());
+  CHECK(std::find(notificationNames.begin(), notificationNames.end(), "dirty_notification") != notificationNames.end());
+
+  REQUIRE(server.Remove("add_function"));
+  REQUIRE(server.Remove("div_function"));
+  REQUIRE(server.Remove("add_products"));
+  REQUIRE(server.Remove("dirty_method"));
+  REQUIRE(server.Remove("dirty_method2"));
+  REQUIRE(server.Remove("rpc"));
+  REQUIRE(server.Remove("some_procedure"));
+  REQUIRE(server.Remove("dirty_notification"));
+  CHECK(server.MethodNames().empty());
+  CHECK(server.NotificationNames().empty());
 }
