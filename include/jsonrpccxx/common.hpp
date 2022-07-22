@@ -59,10 +59,18 @@ namespace jsonrpccxx {
       return JsonRpcException(internal_error, R"(invalid error response: "code" (negative number) and "message" (string) are required)");
     }
 
+    static inline JsonRpcException fromJsonParseError(const json::parse_error &value) {
+      return JsonRpcException(parse_error, std::string("invalid JSON response from server: ") + value.what());
+    }
+
   private:
     int code;
     std::string message;
     json data;
     std::string err;
   };
+
+  static inline json create_parse_error_response_v2(const json::parse_error &e) {
+    return json{{"id", nullptr}, {"error", {{"code", parse_error}, {"message", std::string("parse error: ") + e.what()}}}, {"jsonrpc", "2.0"}};
+  }
 } // namespace jsonrpccxx

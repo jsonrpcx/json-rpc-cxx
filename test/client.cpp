@@ -152,6 +152,12 @@ TEST_CASE_FIXTURE(F, "v2_method_result_empty") {
   c.VerifyMethodRequest(version::v2, "some.method_1", "1");
 }
 
+TEST_CASE_FIXTURE(F, "v2_method_result_parse_error") {
+  c.raw_response = "abcdef";
+  REQUIRE_THROWS_WITH(clientV2.CallMethod<json>("1", "some.method_1", {}), "-32700: invalid JSON response from server: [json.exception.parse_error.101] parse error at line 1, column 1: syntax error while parsing value - invalid literal; last read: 'a'");
+  c.VerifyMethodRequest(version::v2, "some.method_1", "1");
+}
+
 /*
 TEST_CASE_FIXTURE(F, "v1_method_result_empty") {
   c.raw_response = "{}";

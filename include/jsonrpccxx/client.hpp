@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "iclientjsonconnector.hpp"
 #include "iclientconnector.hpp"
 #include <exception>
 #include <nlohmann/json.hpp>
@@ -17,10 +18,10 @@ namespace jsonrpccxx {
     json result;
   };
 
-  class JsonRpcClient {
+  class JsonRpcClientBase {
   public:
-    JsonRpcClient(IClientConnector &connector, version v) : connector(connector), v(v) {}
-    virtual ~JsonRpcClient() = default;
+    JsonRpcClientBase(version v) : v(v) {}
+    virtual ~JsonRpcClientBase() = default;
 
     template <typename T>
     T CallMethod(const id_type &id, const std::string &name) { return call_method(id, name, json::object()).result.get<T>(); }
@@ -33,7 +34,7 @@ namespace jsonrpccxx {
     void CallNotificationNamed(const std::string &name, const named_parameter &params = {}) { call_notification(name, params); }
 
   protected:
-    IClientConnector &connector;
+    virtual IClientJsonConnector &GetConnector() = 0;
 
   private:
     version v;
@@ -56,7 +57,7 @@ namespace jsonrpccxx {
         j["params"] = nullptr;
       }
       try {
-        json response = json::parse(connector.Send(j.dump()));
+        json response = GetConnector().Send(j);
         if (has_key_type(response, "error", json::value_t::object)) {
           throw JsonRpcException::fromJson(response["error"]);
         } else if (has_key_type(response, "error", json::value_t::string)) {
@@ -69,8 +70,8 @@ namespace jsonrpccxx {
             return JsonRpcResponse{response["id"].get<int>(), response["result"].get<json>()};
         }
         throw JsonRpcException(internal_error, R"(invalid server response: neither "result" nor "error" fields found)");
-      } catch (json::parse_error &e) {
-        throw JsonRpcException(parse_error, std::string("invalid JSON response from server: ") + e.what());
+      } catch (const json::parse_error &e) {
+        throw JsonRpcException::fromJsonParseError(e);
       }
     }
 
@@ -86,7 +87,37 @@ namespace jsonrpccxx {
       } else if (v == version::v1) {
         j["params"] = nullptr;
       }
-      connector.Send(j.dump());
+      GetConnector().Send(j);
     }
   };
+
+  class JsonRpcClientJson
+  : public JsonRpcClientBase {
+  public:
+    JsonRpcClientJson(IClientJsonConnector &connector, version v) : JsonRpcClientBase(v), connector(connector) {}
+
+  protected:
+    virtual IClientJsonConnector &GetConnector() override { return connector; }
+
+  private:
+    IClientJsonConnector &connector;
+  };
+
+  class JsonRpcClient
+  : public JsonRpcClientBase
+  , private IClientJsonConnector {
+  public:
+    JsonRpcClient(IClientConnector &connector, version v) : JsonRpcClientBase(v), connector(connector) {}
+
+  protected:
+    IClientConnector &connector;
+    virtual IClientJsonConnector &GetConnector() override { return *this; }
+
+  private:
+
+    virtual json IClientJsonConnector::Send(const json &request) {
+      return json::parse(connector.Send(request.dump()));
+    }
+  };
+
 } // namespace jsonrpccxx

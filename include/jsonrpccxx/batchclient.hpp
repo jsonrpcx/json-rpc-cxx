@@ -83,19 +83,31 @@ namespace jsonrpccxx {
     std::vector<size_t> nullIds;
   };
 
-  class BatchClient : public JsonRpcClient {
+  template <class TBase, class TConnector>
+  class BatchClientBase : public TBase {
   public:
-    explicit BatchClient(IClientConnector &connector) : JsonRpcClient(connector, version::v2) {}
+    explicit BatchClientBase(TConnector &connector) : TBase(connector, version::v2) {}
+
     BatchResponse BatchCall(const BatchRequest &request) {
       try {
-        json response = json::parse(connector.Send(request.Build().dump()));
+        json response = GetConnector().Send(request.Build());
         if (!response.is_array()) {
           throw JsonRpcException(parse_error, std::string("invalid JSON response from server: expected array"));
         }
         return BatchResponse(std::move(response));
-      } catch (json::parse_error &e) {
-        throw JsonRpcException(parse_error, std::string("invalid JSON response from server: ") + e.what());
+      } catch(const json::parse_error & e) {
+        throw JsonRpcException::fromJsonParseError(e);
       }
     }
+  };
+
+  class BatchClientJson : public BatchClientBase<JsonRpcClientJson,IClientJsonConnector> {
+  public:
+    explicit BatchClientJson(IClientJsonConnector &connector) : BatchClientBase<JsonRpcClientJson,IClientJsonConnector>(connector) {}
+  };
+
+  class BatchClient : public BatchClientBase<JsonRpcClient,IClientConnector> {
+  public:
+    explicit BatchClient(IClientConnector &connector) : BatchClientBase<JsonRpcClient,IClientConnector>(connector) {}
   };
 }
