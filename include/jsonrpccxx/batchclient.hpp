@@ -90,7 +90,7 @@ namespace jsonrpccxx {
 
     BatchResponse BatchCall(const BatchRequest &request) {
       try {
-        json response = GetConnector().Send(request.Build());
+        json response = this->GetConnector().Send(request.Build());
         if (!response.is_array()) {
           throw JsonRpcException(parse_error, std::string("invalid JSON response from server: expected array"));
         }

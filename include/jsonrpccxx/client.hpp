@@ -115,7 +115,7 @@ namespace jsonrpccxx {
 
   private:
 
-    virtual json IClientJsonConnector::Send(const json &request) {
+    virtual json Send(const json &request) {
       return json::parse(connector.Send(request.dump()));
     }
   };
