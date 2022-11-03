@@ -45,7 +45,7 @@ jobs:
           command: ./example-warehouse
   "build-osx-clang":
     macos:
-      xcode: "12.4.0"
+      xcode: "14.1.0"
     steps:
       - checkout
       - run:
