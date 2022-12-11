@@ -11,10 +11,10 @@
 
 ![json-rpc-cxx-icon](doc/icon.png)
 
-A [JSON-RPC](https://www.jsonrpc.org/) (1.0 & 2.0) framework implemented in C++17 using the [nlohmann's json for modern C++](https://github.com/nlohmann/json).
+A [JSON-RPC](https://www.jsonrpc.org/) 2.0 framework implemented in C++17 using the [nlohmann's json for modern C++](https://github.com/nlohmann/json).
 
--   JSON-RPC 1.0 and 2.0 compliant client
--   JSON-RPC 1.0 and 2.0 compliant server
+-   JSON-RPC 2.0 compliant client
+-   JSON-RPC 2.0 compliant server
 -   Transport agnostic interfaces
 -   Compile time type mapping (using [nlohmann's arbitrary type conversion](https://github.com/nlohmann/json#arbitrary-types-conversions))
 -   Runtime type checking
