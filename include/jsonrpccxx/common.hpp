@@ -14,13 +14,13 @@ namespace jsonrpccxx {
   static inline bool valid_id_not_null(const json &request) { return has_key(request, "id") && (request["id"].is_number() || request["id"].is_string()); }
 
   enum error_type {
-    parse_error = -32700,
-    invalid_request = -32600,
+    parse_error      = -32700,
+    invalid_request  = -32600,
     method_not_found = -32601,
-    invalid_params = -32602,
-    internal_error = -32603,
-    server_error,
-    invalid
+    invalid_params   = -32602,
+    internal_error   = -32603,
+    server_error     = -32604,
+    invalid          = -32500
   };
 
   class JsonRpcException : public std::exception {
