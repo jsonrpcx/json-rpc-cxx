@@ -95,7 +95,7 @@ public:
   };
 
   void dirty_notification() { throw std::exception(); }
-  int dirty_method(int a, int b) { to_string(a+b); throw std::exception(); }
+  int dirty_method(int a, int b) { auto _ = to_string(a+b); throw std::exception(); }
   int dirty_method2(int a, int b) { throw (a+b); }
 
   string param_proc;
