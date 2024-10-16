@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2024-10-16
+
+### Fixed
+- Positive numbers are not accepted in error codes (#44)
+- Using const member methods was not possible (#45)
+- `dirty_method` (#46)
+
 ## [0.3.1] - 2022-04-19
 ### Changed
 - Updated cpp-httplib to 0.10.6
