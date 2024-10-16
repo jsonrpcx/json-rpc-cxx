@@ -17,6 +17,13 @@ public:
   void notify(const std::string &hello) { notifyResult = string("Hello world: ") + hello; }
 };
 
+class SomeClassConst {
+public:
+  int add(int a, int b) const { return a + b; } 
+  void notify(const std::string &hello) { notifyResult = string("Hello world: ") + hello; }
+};
+
+
 TEST_CASE("test function binding") {
   MethodHandle mh = GetHandle(&add);
   CHECK(mh(R"([3, 4])"_json) == 7);
@@ -38,6 +45,12 @@ TEST_CASE("test class member binding") {
   CHECK(notifyResult.empty());
   mh2(R"(["someone"])"_json);
   CHECK(notifyResult == "Hello world: someone");
+}
+
+TEST_CASE("test const class member binding") {
+  SomeClassConst instance;
+  MethodHandle mh = GetHandle(&SomeClassConst::add, instance);
+  CHECK(mh(R"([3, 4])"_json) == 7);
 }
 
 TEST_CASE("test class member explicit binding") {
