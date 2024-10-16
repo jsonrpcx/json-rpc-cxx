@@ -46,7 +46,7 @@ namespace jsonrpccxx {
     const char *what() const noexcept override { return err.c_str(); }
 
     static inline JsonRpcException fromJson(const json &value) {
-      bool has_code = has_key_type(value, "code", json::value_t::number_integer);
+      bool has_code = has_key_type(value, "code", json::value_t::number_integer) || has_key_type(value, "code", json::value_t::number_unsigned);
       bool has_message = has_key_type(value, "message", json::value_t::string);
       bool has_data = has_key(value, "data");
       if (has_code && has_message) {
@@ -56,7 +56,7 @@ namespace jsonrpccxx {
           return JsonRpcException(value["code"], value["message"]);
         }
       }
-      return JsonRpcException(internal_error, R"(invalid error response: "code" (negative number) and "message" (string) are required)");
+      return JsonRpcException(internal_error, R"(invalid error response: "code" (integer number) and "message" (string) are required)");
     }
 
   private:
